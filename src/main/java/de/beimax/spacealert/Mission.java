@@ -5,6 +5,7 @@ package de.beimax.spacealert;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -55,9 +56,59 @@ public class Mission {
 	private int maxTSeriousInternalThreat = 6;
 	
 	/**
+	 * minimum data operations (either data transfer or incoming data)
+	 */
+	private int[] minDataOperations = {2, 2, 0};
+	private int[] maxDataOperations = {3, 3, 1};
+	
+	/**
+	 * minimum and maximum incoming data by phases
+	 */
+	private int[] minIncomingData = {1, 0, 0};
+	private int[] maxIncomingData = {3, 2, 0};
+	private int minIncomingDataTotal = 2;
+	
+	/**
+	 * minimum and maximum data transfers by phases
+	 */
+	private int[] minDataTransfer = {0, 1, 1};
+	private int[] maxDataTransfer = {1, 2, 1};
+	private int minDataTransferTotal = 3;
+	
+	/**
+	 * minimum and maximum time for white noise
+	 */
+	private int minWhiteNoise = 45;
+	private int maxWhiteNoise = 60;
+	private int minWhiteNoiseTime = 9;
+	private int maxWhiteNoiseTime = 20;
+	
+	/**
+	 * minimum and maximum time for phases
+	 */
+	private int[] minPhaseTime = {205, 180, 140};
+	private int[] maxPhaseTime = {240, 225, 155};
+	
+	/**
 	 * keeps threats
 	 */
 	private Threat[] threats;
+	
+	/**
+	 * keeps incoming and data transfers
+	 */
+	private int[] incomingData;
+	private int[] dataTransfers;
+	
+	/**
+	 * white noise chunks in seconds (to distribute)
+	 */
+	private int[] whiteNoise;
+
+	/**
+	 * phase times in seconds
+	 */
+	private int[] phaseTimes;
 	
 	/**
 	 * Generate new mission
@@ -74,11 +125,20 @@ public class Mission {
 			return false; //fail
 		}
 
-		//TODO: generate phases
-		//TODO: generate white noise
-		//TODO: generate data exchange
-		//TODO: generate incoming data
+		// generate data transfer and incoming data
+		generated = false; tries = 100;
+		do {generated = generateDataOperations();} while(!generated && tries-- > 0);
+		if (!generated) {
+			logger.warning("Giving up creating data operations.");
+			return false; //fail
+		}
+		
+		//generate times
+		generateTimes();
 
+		//generate phases
+		generatePhases();
+		
 		return false;
 	}
 	
@@ -239,10 +299,116 @@ public class Mission {
 				lastSector = threats[i].getSector();
 			}
 
-			// TODO: remove from debugging stuff
-			if (threats[i] != null) System.out.println(threats[i]);
+			//if (threats[i] != null) System.out.println(threats[i]);
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Generate data operations (either data transfer or incoming data)
+	 * @return true, if data creation could be generated
+	 */
+	protected boolean generateDataOperations() {
+		// random number generator
+		Random generator = new Random();
+		
+		// clear data
+		incomingData = new int[3];
+		dataTransfers = new int[3];
+		
+		int incomingSum = 0;
+		int transferSum = 0;
+
+		// generate stuff by phase
+		for (int i = 0; i < 3; i++) {
+			incomingData[i] = generator.nextInt(maxIncomingData[i] - minIncomingData[i] + 1) + minIncomingData[i];
+			dataTransfers[i] = generator.nextInt(maxDataTransfer[i] - minDataTransfer[i] + 1) + minDataTransfer[i];
+			
+			// check minimums
+			if (incomingData[i] + dataTransfers[i] < minDataOperations[i] ||
+					incomingData[i] + dataTransfers[i] > maxDataOperations[i]) return false;
+			
+			incomingSum += incomingData[i];
+			transferSum += dataTransfers[i];
+		}
+		
+		// check minimums
+		if (incomingSum < minIncomingDataTotal || transferSum < minDataTransferTotal) return false;
+		
+		// debuggin information
+		if (logger.getLevel() == Level.FINE) {
+			for (int i = 0; i < 3; i++) {
+				logger.fine("Phase " + (i+1) + ": Incoming Data = " + incomingData[i] + "; Data Transfers = " + dataTransfers[i]);
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * simple generation of times for phases, white noise etc.
+	 */
+	protected void generateTimes() {
+		// random number generator
+		Random generator = new Random();
+		
+		// generate white noise
+		int whiteNoiseTime = generator.nextInt(maxWhiteNoise - minWhiteNoise + 1) + minWhiteNoise;
+		logger.fine("White noise time: " + whiteNoiseTime);
+		
+		// create chunks
+		ArrayList<Integer> whiteNoiseChunks = new ArrayList<Integer>();
+		while (whiteNoiseTime > 0) {
+			// create random chunk
+			int chunk = generator.nextInt(maxWhiteNoiseTime - minWhiteNoiseTime + 1) + minWhiteNoiseTime;
+			// check if there is enough time left
+			if (chunk > whiteNoiseTime) {
+				// hard case: smaller than minimum time
+				if (chunk < minWhiteNoiseTime) {
+					// add to last chunk that fits
+					for (int i = whiteNoiseChunks.size()-1; i >= 0; i--) {
+						int sumChunk = whiteNoiseChunks.get(i) + chunk;
+						// if smaller than maximum time: add to this chunk
+						if (sumChunk <= maxWhiteNoiseTime) {
+							whiteNoiseChunks.set(i, sumChunk);
+							whiteNoiseTime = 0;
+							break;
+						}
+					}
+					// still not zeroed
+					if (whiteNoiseTime > 0) { // add to last element, regardless - quite unlikely though
+						int lastIdx = whiteNoiseChunks.size()-1;
+						whiteNoiseChunks.set(lastIdx, whiteNoiseChunks.get(lastIdx) + chunk);
+						whiteNoiseTime = 0;
+					}
+				} else { // easy case: create smaller rest chunk
+					whiteNoiseChunks.add(whiteNoiseTime);
+					whiteNoiseTime = 0;
+				}
+			} else { // add new chunk
+				whiteNoiseChunks.add(chunk);
+				whiteNoiseTime -= chunk;
+			}
+		}
+		
+		// ok, add chunks to mission
+		whiteNoise = new int[whiteNoiseChunks.size()];
+		for (int i = 0; i < whiteNoiseChunks.size(); i++) whiteNoise[i] = whiteNoiseChunks.get(i);
+		
+		// add mission lengths
+		phaseTimes = new int[3];
+		for (int i = 0; i < 3; i++) {
+			phaseTimes[i] = generator.nextInt(maxPhaseTime[i] - minPhaseTime[i] + 1) + minPhaseTime[i];
+		}
+	}
+	
+	/**
+	 * generate phase stuff from data above
+	 */
+	protected void generatePhases() {
+		logger.info("Data gathered: Generating phases.");
+		
+		//TODO: stub
 	}
 }
