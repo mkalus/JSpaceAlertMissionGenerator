@@ -5,6 +5,7 @@ package de.beimax.spacealert;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -90,6 +91,17 @@ public class Mission {
 	private int[] maxPhaseTime = {240, 225, 155};
 	
 	/**
+	 * times for first threats to appear
+	 */
+	private int[] minTimeForFirst = { 10, 10 };
+	private int[] maxTimeForFirst = { 20, 40 };
+	
+	/**
+	 * chance for ambush in phases 4/8 in %
+	 */
+	private int[] chanceForAmbush = { 40, 40 };
+	
+	/**
 	 * keeps threats
 	 */
 	private Threat[] threats;
@@ -110,6 +122,11 @@ public class Mission {
 	 */
 	private int[] phaseTimes;
 	
+	/**
+	 * event list
+	 */
+	EventList eventList;
+
 	/**
 	 * Generate new mission
 	 * 
@@ -408,7 +425,111 @@ public class Mission {
 	 */
 	protected void generatePhases() {
 		logger.info("Data gathered: Generating phases.");
+
+		// random number generator
+		Random generator = new Random();
+
+		// create events
+		eventList = new EventList();
+
+		// add fixed events: announcements
+		eventList.addPhaseEvents(phaseTimes[0], phaseTimes[1], phaseTimes[2]);
 		
-		//TODO: stub
+		boolean ambushOccured = false;
+		// add threats in first phase
+		int last = 3; // last index to check
+		// ambush handling - is there a phase 4, and it is a normal external threat? ... and chance is taken?
+		if (threats[3] != null && threats[3].getThreatLevel() == Threat.THREAT_LEVEL_NORMAL &&
+				threats[3].getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL && generator.nextInt(100) + 1 < chanceForAmbush[0]) {
+			//...then add an "ambush" threat between 1 minute and 20 secs warnings
+			boolean done = false; // try until it fits
+			do {
+				// TODO: remove hardcoded length here:
+				int ambushTime = generator.nextInt(35) + phaseTimes[0] - 59;
+				logger.info("Ambush in phase 1 at time: " + ambushTime);
+				done = eventList.addEvent(ambushTime, threats[3]);
+			} while (!done);
+			
+			last = 2; // ignore last threat
+			ambushOccured = true; // to disallow two ambushes in one game
+		}
+
+		// add the rest of the threats
+		int currentTime = generator.nextInt(maxTimeForFirst[0] - minTimeForFirst[0] + 1) + minTimeForFirst[0];
+		int lastTime = (int) (phaseTimes[0] * 0.6);
+		boolean first = true;
+		// look for first threat
+		for (int i = 0; i <= last; i++) {
+			if (threats[i] == null) continue;
+			// first event?
+			if (first) {
+				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list - arg!");
+				first = false;
+			} else {
+				boolean done = false; // try until it fits
+				int nextTime = 0;
+				do {
+					// next element occurs
+					nextTime = generator.nextInt((lastTime - currentTime) / 3) + 5;
+					done = eventList.addEvent(currentTime + nextTime, threats[i]);
+				} while (!done);
+				currentTime += nextTime;
+			}
+			// add to time
+			currentTime += threats[i].getLengthInSeconds();
+		}
+
+		// add threats in second phase
+		last = 7; // last index to check
+		// ambush handling - is there a phase 8, and it is a normal external threat? ... and chance is taken?
+		if (!ambushOccured && threats[7] != null && threats[7].getThreatLevel() == Threat.THREAT_LEVEL_NORMAL &&
+				threats[7].getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL && generator.nextInt(100) + 1 < chanceForAmbush[1]) {
+			//...then add an "ambush" threat between 1 minute and 20 secs warnings
+			boolean done = false; // try until it fits
+			do {
+				// TODO: remove hardcoded length here:
+				int ambushTime = generator.nextInt(35) + phaseTimes[0] + phaseTimes[1] - 59;
+				logger.info("Ambush in phase 2 at time: " + ambushTime);
+				done = eventList.addEvent(ambushTime, threats[7]);
+			} while (!done);
+			
+			last = 6; // ignore last threat
+		}
+
+		// add the rest of the threats
+		currentTime = phaseTimes[0] + generator.nextInt(maxTimeForFirst[1] - minTimeForFirst[1] + 1) + minTimeForFirst[1];
+		lastTime = phaseTimes[0] + (int) (phaseTimes[1] * 0.6);
+		first = true;
+		// look for first threat
+		for (int i = 4; i <= last; i++) {
+			if (threats[i] == null) continue;
+			// first event?
+			if (first) {
+				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list in second phase - arg!");
+				first = false;
+			} else {
+				boolean done = false; // try until it fits
+				int nextTime = 0;
+				do {
+					// next element occurs
+					nextTime = generator.nextInt((lastTime - currentTime) / 3) + 5;
+					done = eventList.addEvent(currentTime + nextTime, threats[i]);
+				} while (!done);
+				currentTime += nextTime;
+			}
+			// add to time
+			currentTime += threats[i].getLengthInSeconds();
+		}
+
+		//TODO: add data transfer and incoming data
+		//TODO: add white noise
+	}
+	
+	/**
+	 * Prints list of missions
+	 */
+	@Override
+	public String toString() {
+		return eventList.toString();
 	}
 }

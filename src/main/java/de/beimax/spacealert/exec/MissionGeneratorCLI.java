@@ -18,6 +18,8 @@ public class MissionGeneratorCLI {
 		Mission mission = new Mission();
 
 		mission.generateMission();
+		
+		System.out.println(mission);
 	}
 
 }

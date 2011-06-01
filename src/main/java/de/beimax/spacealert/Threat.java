@@ -8,7 +8,7 @@ package de.beimax.spacealert;
  * 
  * @author mkalus
  */
-public class Threat {
+public class Threat implements Event {
 	public static final int THREAT_LEVEL_NORMAL = 1;
 	public static final int THREAT_LEVEL_SERIOUS = 2;
 
@@ -18,6 +18,13 @@ public class Threat {
 	public static final int THREAT_SECTOR_BLUE = 1;
 	public static final int THREAT_SECTOR_WHITE = 2;
 	public static final int THREAT_SECTOR_RED = 3;
+	
+	/**
+	 * assumed time in seconds: 10
+	 */
+	public int getLengthInSeconds() {
+		return 10;
+	}
 	
 	/**
 	 * Threat level
@@ -120,7 +127,32 @@ public class Threat {
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append("Threat [");
+		// unconfirmed wrapper?
+		if (!confirmed) s.append("[Unconfirmed: ");
+		// add time
+		s.append("Time T+").append(time).append(". ");
+		// internal/external?
+		if (threatPosition == THREAT_POSITION_INTERNAL) {
+			if (threatLevel == THREAT_LEVEL_SERIOUS) {
+				s.append("Serious internal threat");
+			} else s.append("Internal threat");
+		} else if (threatLevel == THREAT_LEVEL_SERIOUS) {
+			s.append("Serious threat");
+		} else s.append("Threat");
+		s.append('.');
+		if (threatPosition != THREAT_POSITION_INTERNAL) {
+			s.append(" Zone ");
+			switch (sector) {
+			case THREAT_SECTOR_BLUE: s.append("blue"); break;
+			case THREAT_SECTOR_WHITE: s.append("white"); break;
+			case THREAT_SECTOR_RED: s.append("red"); break;
+			default: s.append("unknown");
+			}
+			s.append('.');
+		}
+		if (!confirmed) s.append(']');
+
+		/*s.append("Threat [");
 		// unconfirmed?
 		if (!confirmed) s.append("unconfirmed ");
 		// position?
@@ -146,7 +178,7 @@ public class Threat {
 			default: s.append("unknown");
 			}
 		}
-		s.append(']');
+		s.append(']');*/
 		
 		return s.toString();
 	}
