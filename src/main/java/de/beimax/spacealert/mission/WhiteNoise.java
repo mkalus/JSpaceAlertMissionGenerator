@@ -47,4 +47,16 @@ public class WhiteNoise implements Event {
 		
 		return sb.toString();
 	}
+
+	/**
+	 * get MP3 file names
+	 */
+	public String getMP3s(int time) {
+		StringBuilder sb = new StringBuilder();
+		
+		// calculate time of white noise
+		sb.append("communications_down.mp3,white_noise.mp3:").append(length - 2).append(",communications_restored.mp3");
+
+		return sb.toString();
+	}
 }

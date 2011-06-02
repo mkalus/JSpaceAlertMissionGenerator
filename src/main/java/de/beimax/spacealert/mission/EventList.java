@@ -104,6 +104,18 @@ public class EventList {
 
 		return true;
 	}
+	
+	/**
+	 * return the next event for a given time
+	 * @param time
+	 * @return map.entry
+	 */
+	public Map.Entry<Integer,Event> getNextEvent(int time) {
+		// last key?
+		if (time > events.lastKey()) return null;
+		
+		return events.ceilingEntry(time);
+	}
 
 	/**
 	 * Prints list of missions

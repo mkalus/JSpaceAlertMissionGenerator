@@ -23,4 +23,11 @@ public interface Event {
 	 * @return English description like the one on the cards
 	 */
 	public String getDescription(int time);
+	
+	/**
+	 * Get a list of MP3 files to play
+	 * @param time
+	 * @return comma separated list of MP3s
+	 */
+	public String getMP3s(int time);
 }

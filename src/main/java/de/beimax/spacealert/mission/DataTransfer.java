@@ -30,4 +30,11 @@ public class DataTransfer implements Event {
 	public String getDescription(int time) {
 		return toString();
 	}
+
+	/**
+	 * get MP3 file names
+	 */
+	public String getMP3s(int time) {
+		return "data_transfer.mp3";
+	}
 }

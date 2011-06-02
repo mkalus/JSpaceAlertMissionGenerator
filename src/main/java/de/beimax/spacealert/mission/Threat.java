@@ -3,6 +3,8 @@
  */
 package de.beimax.spacealert.mission;
 
+import java.io.File;
+
 /**
  * Threat class
  * 
@@ -126,31 +128,31 @@ public class Threat implements Event {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		// unconfirmed wrapper?
-		if (!confirmed) s.append("[Unconfirmed: ");
+		if (!confirmed) sb.append("[Unconfirmed: ");
 		// add time
-		s.append("Time T+").append(time).append(". ");
+		sb.append("Time T+").append(time).append(". ");
 		// internal/external?
 		if (threatPosition == THREAT_POSITION_INTERNAL) {
 			if (threatLevel == THREAT_LEVEL_SERIOUS) {
-				s.append("Serious internal threat");
-			} else s.append("Internal threat");
+				sb.append("Serious internal threat");
+			} else sb.append("Internal threat");
 		} else if (threatLevel == THREAT_LEVEL_SERIOUS) {
-			s.append("Serious threat");
-		} else s.append("Threat");
-		s.append('.');
+			sb.append("Serious threat");
+		} else sb.append("Threat");
+		sb.append('.');
 		if (threatPosition != THREAT_POSITION_INTERNAL) {
-			s.append(" Zone ");
+			sb.append(" Zone ");
 			switch (sector) {
-			case THREAT_SECTOR_BLUE: s.append("blue"); break;
-			case THREAT_SECTOR_WHITE: s.append("white"); break;
-			case THREAT_SECTOR_RED: s.append("red"); break;
-			default: s.append("unknown");
+			case THREAT_SECTOR_BLUE: sb.append("blue"); break;
+			case THREAT_SECTOR_WHITE: sb.append("white"); break;
+			case THREAT_SECTOR_RED: sb.append("red"); break;
+			default: sb.append("unknown");
 			}
-			s.append('.');
+			sb.append('.');
 		}
-		if (!confirmed) s.append(']');
+		if (!confirmed) sb.append(']');
 
 		/*s.append("Threat [");
 		// unconfirmed?
@@ -180,7 +182,7 @@ public class Threat implements Event {
 		}
 		s.append(']');*/
 		
-		return s.toString();
+		return sb.toString();
 	}
 
 	/**
@@ -188,5 +190,50 @@ public class Threat implements Event {
 	 */
 	public String getDescription(int time) {
 		return toString();
+	}
+
+	/**
+	 * get MP3 file names
+	 */
+	public String getMP3s(int time) {
+		StringBuilder sb = new StringBuilder();
+		
+		// check clip directory for english or german type files
+		// ...why did these guys even split this up?
+		boolean german = false;
+		if (new File("clips" + File.separator + "threat_zone_blue.mp3").isFile()) german = true;
+		
+		// start
+		if (!confirmed) sb.append("unconfirmed_report.mp3,");
+		sb.append("time_t_plus_").append(this.time).append(".mp3,");
+
+		// internal/external?
+		if (threatPosition == THREAT_POSITION_INTERNAL) {
+			if (threatLevel == THREAT_LEVEL_SERIOUS) {
+				sb.append("serious_internal_threat");
+			} else sb.append("internal_threat");
+		} else if (threatLevel == THREAT_LEVEL_SERIOUS) {
+			sb.append("serious_threat");
+		} else sb.append("threat");
+		if (threatPosition != THREAT_POSITION_INTERNAL) {
+			if (german) sb.append("_zone_");
+			else sb.append(".mp3,zone_"); // language dependent threats
+			switch (sector) {
+			case THREAT_SECTOR_BLUE: sb.append("blue"); break;
+			case THREAT_SECTOR_WHITE: sb.append("white"); break;
+			case THREAT_SECTOR_RED: sb.append("red"); break;
+			}
+		}		
+		sb.append(".mp3");
+		
+		// main message
+		String message = sb.toString();
+		
+		// clean and but together
+		sb = new StringBuilder();
+		
+		sb.append("alert.mp3,").append(message).append(",repeat.mp3,").append(message);
+
+		return sb.toString();
 	}
 }

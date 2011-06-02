@@ -30,4 +30,10 @@ public class IncomingData implements Event {
 		return toString();
 	}
 
+	/**
+	 * get MP3 file names
+	 */
+	public String getMP3s(int time) {
+		return "incoming_data.mp3";
+	}
 }

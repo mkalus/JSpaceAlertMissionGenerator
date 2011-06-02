@@ -72,4 +72,23 @@ public class Announcement implements Event {
 	public String getDescription(int time) {
 		return toString();
 	}
+
+	/**
+	 * get MP3 file names
+	 */
+	public String getMP3s(int time) {
+		switch (type) {
+		case ANNOUNCEMENT_PH1_START: return "begin_first_phase.mp3";
+		case ANNOUNCEMENT_PH1_ONEMINUTE: return "first_phase_ends_in_1_minute.mp3";
+		case ANNOUNCEMENT_PH1_TWENTYSECS: return "first_phase_ends_in_20_seconds.mp3";
+		case ANNOUNCEMENT_PH1_ENDS: return "first_phase_ends.mp3,second_phase_begins.mp3";
+		case ANNOUNCEMENT_PH2_ONEMINUTE: return "second_phase_ends_in_1_minute.mp3";
+		case ANNOUNCEMENT_PH2_TWENTYSECS: return "second_phase_ends_in_1_minute.mp3";
+		case ANNOUNCEMENT_PH2_ENDS: return "second_phase_ends.mp3,third_phase_begins.mp3";
+		case ANNOUNCEMENT_PH3_ONEMINUTE: return "operation_ends_in_1_minute.mp3";
+		case ANNOUNCEMENT_PH3_TWENTYSECS: return "operation_ends_in_1_minute.mp3";
+		case ANNOUNCEMENT_PH3_ENDS: return "operation_ends.mp3";
+		}
+		return null;
+	}
 }
