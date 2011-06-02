@@ -17,6 +17,6 @@ Have fun!
 
 Planed additions:
 
-- Background alert sounds (like on CD)
 - configuration options
+- output options: text, xml, code for flash-player, mp3-file
 - GUI...

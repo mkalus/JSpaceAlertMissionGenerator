@@ -30,22 +30,29 @@ public class MP3Player extends Thread {
 	private Player[] players;
 	
 	/**
+	 * reference to backgroundplayer
+	 */
+	BackgroundMP3Player backgroundPlayer;
+	
+	/**
 	 * Constructor
 	 * @param files comma separated list of file names
 	 */
-	public MP3Player(String files) {
+	public MP3Player(String files, BackgroundMP3Player backgroundPlayer) {
 		// split files
 		if (files != null)
 			this.files = files.split(",");
+		this.backgroundPlayer = backgroundPlayer;
 	}
 	
 	/**
 	 * Constructor
 	 * @param files array of file names
 	 */
-	public MP3Player(String[] files) {
+	public MP3Player(String[] files, BackgroundMP3Player backgroundPlayer) {
 		// split files
 		this.files = files;
+		this.backgroundPlayer = backgroundPlayer;
 	}
 	
 	/**
@@ -58,8 +65,10 @@ public class MP3Player extends Thread {
 			logger.warning("Empty file list in MP3 player.");
 			return;
 		}
-		players = new Player[files.length];
+		// stop background player
+		backgroundPlayer.stopMusic();
 		// preload files
+		players = new Player[files.length];
 		for (int i = 0; i < files.length; i++) {
 			try {
 				// special separator?
@@ -87,6 +96,8 @@ public class MP3Player extends Thread {
 				logger.warning("Runtime Exception: " + e.getMessage());
 			}
 		}
+		// after playing - start background player again
+		backgroundPlayer.startMusic();
 	}
 	
 	private void playSpecial(Player player, int seconds, int index) throws JavaLayerException, RuntimeException {

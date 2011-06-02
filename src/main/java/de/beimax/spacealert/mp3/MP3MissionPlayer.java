@@ -6,8 +6,6 @@ package de.beimax.spacealert.mp3;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.swing.plaf.SliderUI;
-
 import de.beimax.spacealert.mission.Event;
 import de.beimax.spacealert.mission.EventList;
 import de.beimax.spacealert.mission.Mission;
@@ -23,11 +21,11 @@ public class MP3MissionPlayer implements Runnable {
 	 * event list of mission
 	 */
 	private EventList events;
-
+	
 	/**
-	 * mission time in milliseconds
+	 * background player
 	 */
-	private long time;
+	BackgroundMP3Player backgroundPlayer;
 
 	/**
 	 * Constructor
@@ -46,6 +44,10 @@ public class MP3MissionPlayer implements Runnable {
 		long start = System.currentTimeMillis();
 		int nextEventAt = 0;
 		
+		// create BackgroundMP3Player
+		backgroundPlayer =  new BackgroundMP3Player(); // do not start player right away, it will be started by the first player anyway
+		backgroundPlayer.start();
+		
 		// get next event
 		Map.Entry<Integer, Event> nextEvent = events.getNextEvent(nextEventAt);
 		do {
@@ -59,13 +61,16 @@ public class MP3MissionPlayer implements Runnable {
 			int eventTime = nextEvent.getKey();
 			logger.info("Event " + EventList.formatTime(eventTime) + " - " + event.getDescription(eventTime));
 			
-			MP3Player player = new MP3Player(event.getMP3s(eventTime));
+			MP3Player player = new MP3Player(event.getMP3s(eventTime), backgroundPlayer);
 			player.start();
 			
 			// get next event
 			nextEvent = events.getNextEvent(eventTime+1);
 			nextEventAt = nextEvent.getKey();
 		} while (nextEvent != null);
+		
+		// stop the thread completely
+		backgroundPlayer.stopThread();
 		
 		logger.info("MP3MissionPlayer finished");
 	}
