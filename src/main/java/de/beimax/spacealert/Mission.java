@@ -453,6 +453,9 @@ public class Mission {
 			ambushOccured = true; // to disallow two ambushes in one game
 		}
 
+		// to be used further down
+		int[] lastThreatTime = { 0, 0 };
+
 		// add the rest of the threats
 		int currentTime = generator.nextInt(maxTimeForFirst[0] - minTimeForFirst[0] + 1) + minTimeForFirst[0];
 		int lastTime = (int) (phaseTimes[0] * 0.6);
@@ -473,6 +476,8 @@ public class Mission {
 					done = eventList.addEvent(currentTime + nextTime, threats[i]);
 				} while (!done);
 				currentTime += nextTime;
+				// save lastThreatTime for data transfers further down
+				if (i < 3) lastThreatTime[0] = currentTime;
 			}
 			// add to time
 			currentTime += threats[i].getLengthInSeconds();
@@ -515,24 +520,38 @@ public class Mission {
 					done = eventList.addEvent(currentTime + nextTime, threats[i]);
 				} while (!done);
 				currentTime += nextTime;
+				// save lastThreatTime for data transfers further down
+				if (i < 7) lastThreatTime[1] = currentTime;
 			}
 			// add to time
 			currentTime += threats[i].getLengthInSeconds();
 		}
 
 		//add data transfers
-		// special balance: first data transfers in phase 1 and 2 should occur shortly after first threat wave
-		for (int i = 0; i < 2; i++) {
-			if (dataTransfers[i] > 0) { // if there is a data transfer
-				//TODO
-				
-			}
-		}
-		
-		// distribute rest of data transfers and incoming data randomly within the phases
 		// get start and end times
 		int startTime = 0;
 		int endTime = 0;
+		// special balance: first data transfers in phase 1 and 2 should occur shortly after first threat wave
+		for (int i = 0; i < 2; i++) {
+			startTime = endTime;
+			endTime += phaseTimes[i];
+			if (dataTransfers[i] > 0) { // if there is a data transfer
+				startTime = lastThreatTime[i];
+				boolean done = false; // try until it fits
+				do { // try to add incoming data within 30 seconds of event
+					startTime = generator.nextInt(31) + startTime + 1;
+					done = eventList.addEvent(startTime, new DataTransfer());
+				} while (!done && startTime < endTime);
+				if (done) {
+					// reduce data transfers below
+					dataTransfers[i]--;
+				}
+			}
+		}
+		
+		startTime = 0;
+		endTime = 0;
+		// distribute rest of data transfers and incoming data randomly within the phases
 		for (int i = 0; i < 3; i++) {
 			// recalculate phase times
 			startTime = endTime;
