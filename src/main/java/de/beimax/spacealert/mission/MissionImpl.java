@@ -30,6 +30,7 @@ public class MissionImpl implements Mission {
 	 */
 	private int minInternalThreats = 1;
 	private int maxInternalThreats = 3;
+	private int maxInternalThreatsNumber = 2; // number of internal threats max
 	
 	/**
 	 * minimum and maximum time in which normal threats can occur
@@ -99,6 +100,11 @@ public class MissionImpl implements Mission {
 	 * chance for ambush in phases 4/8 in %
 	 */
 	private int[] chanceForAmbush = { 40, 40 };
+	
+	/**
+	 * "middle" threats (2+3/5+6) should appear with % of phase length
+	 */
+	private int threatsWithInPercent = 70;
 	
 	/**
 	 * keeps threats
@@ -189,6 +195,12 @@ public class MissionImpl implements Mission {
 		
 		logger.fine("Normal Threats: " + normalThreats + "; Serious Threats: " + seriousThreats);
 		
+		// if there are 8 normal threats - check again, if we really want this
+		if (normalThreats == 8 && generator.nextInt(3) != 0) {
+			logger.info("8 normal threats unlikely. Redoing.");
+			return false;
+		}
+
 		// get sums
 		int threatsSum = normalThreats + seriousThreats;
 		
@@ -240,6 +252,8 @@ public class MissionImpl implements Mission {
 
 		// create threats by level
 		threats = new Threat[8];
+		// counter for maximum internal threats
+		int internalThreatsNumber = 0;
 		//statistics counter to make internal threats likely, too
 		int externalThreatLevelLeft = externalThreats;
 		for (int i = 0; i < threatsSum; i++) {
@@ -263,8 +277,9 @@ public class MissionImpl implements Mission {
 			// internal/external?
 			if (generator.nextInt(threatsSum - i) + 1 <= externalThreatLevelLeft) {
 				if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-					if (externalThreatLevelLeft == 1) { // not enought external threat level left => make internal
+					if (externalThreatLevelLeft == 1) { // not enough external threat level left => make internal
 						newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+						internalThreatsNumber++;
 					} else { // serious threat level deduction
 						externalThreatLevelLeft -= 2;
 						newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
@@ -273,7 +288,14 @@ public class MissionImpl implements Mission {
 					externalThreatLevelLeft--;
 					newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
 				}
-			} else newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+			} else {
+				newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+				internalThreatsNumber++;
+			}
+			if (internalThreatsNumber > maxInternalThreatsNumber) {
+				logger.info("Too many internal threats. Redoing.");
+				return false;
+			}
 			
 			// define phase
 			int maxCounter = 3; // try three times before giving up
@@ -299,7 +321,7 @@ public class MissionImpl implements Mission {
 				phases.remove(idx);
 			} while(!found && maxCounter-- > 0);
 			if (!found) {
-				logger.info("Could not create mission due to restrictions. Redoing.");
+				logger.info("Could not create mission due to phase restrictions. Redoing.");
 				return false;
 			}
 
@@ -466,7 +488,8 @@ public class MissionImpl implements Mission {
 
 		// add the rest of the threats
 		int currentTime = generator.nextInt(maxTimeForFirst[0] - minTimeForFirst[0] + 1) + minTimeForFirst[0];
-		int lastTime = (int) (phaseTimes[0] * 0.6);
+		// threats should appear within this time
+		int lastTime = (int) (phaseTimes[0] * (((float)threatsWithInPercent) / 100));
 		boolean first = true;
 		// look for first threat
 		for (int i = 0; i <= last; i++) {
@@ -479,8 +502,8 @@ public class MissionImpl implements Mission {
 				boolean done = false; // try until it fits
 				int nextTime = 0;
 				do {
-					// next element occurs
-					nextTime = generator.nextInt((lastTime - currentTime) / 3) + 5;
+					// next threat appears
+					nextTime = generator.nextInt((lastTime - currentTime) / 2) + 5;
 					done = eventList.addEvent(currentTime + nextTime, threats[i]);
 				} while (!done);
 				currentTime += nextTime;
@@ -510,7 +533,8 @@ public class MissionImpl implements Mission {
 
 		// add the rest of the threats
 		currentTime = phaseTimes[0] + generator.nextInt(maxTimeForFirst[1] - minTimeForFirst[1] + 1) + minTimeForFirst[1];
-		lastTime = phaseTimes[0] + (int) (phaseTimes[1] * 0.6);
+		// threats should appear within this time
+		lastTime = phaseTimes[0] + (int) (phaseTimes[1] * (((float)threatsWithInPercent) / 100));
 		first = true;
 		// look for first threat
 		for (int i = 4; i <= last; i++) {
@@ -524,7 +548,7 @@ public class MissionImpl implements Mission {
 				int nextTime = 0;
 				do {
 					// next element occurs
-					nextTime = generator.nextInt((lastTime - currentTime) / 3) + 5;
+					nextTime = generator.nextInt((lastTime - currentTime) / 2) + 5;
 					done = eventList.addEvent(currentTime + nextTime, threats[i]);
 				} while (!done);
 				currentTime += nextTime;
