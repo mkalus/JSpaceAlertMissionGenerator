@@ -42,6 +42,7 @@ public class BackgroundMP3Player extends Thread {
 	 * stop the thread completely
 	 */
 	public void stopThread() {
+		stopMusic(); //stop music, too
 		stopped = true;
 	}
 	
@@ -64,7 +65,7 @@ public class BackgroundMP3Player extends Thread {
 	 */
 	@Override
 	public void run() {
-		System.out.println("Thread started.");
+		//System.out.println("Thread started.");
 		stopped = false;
 		stopMusic(); // do not start background music right away
 		boolean lastState = playing;
@@ -89,7 +90,7 @@ public class BackgroundMP3Player extends Thread {
 			} catch (InterruptedException e) {}
 		};
 		stopMusic();
-		System.out.println("Thread stopped.");
+		//System.out.println("Thread stopped.");
 	}
 	
 	/**

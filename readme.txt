@@ -17,6 +17,11 @@ You can also look into the forums on http://www.boardgamegeek.com/ which provide
 
 Have fun!
 
+Known bugs:
+- only a maximum of 2 internal threads should appear per mission
+- limit probability of missions with 8 normal threats somewhat
+- distribute threats somewhat further into phases (they gather quite closely at the start of the missions)
+
 Planed additions:
 
 - configuration options

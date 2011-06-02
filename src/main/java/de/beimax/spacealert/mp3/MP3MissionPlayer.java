@@ -66,7 +66,8 @@ public class MP3MissionPlayer implements Runnable {
 			
 			// get next event
 			nextEvent = events.getNextEvent(eventTime+1);
-			nextEventAt = nextEvent.getKey();
+			if (nextEvent != null)
+				nextEventAt = nextEvent.getKey();
 		} while (nextEvent != null);
 		
 		// stop the thread completely
