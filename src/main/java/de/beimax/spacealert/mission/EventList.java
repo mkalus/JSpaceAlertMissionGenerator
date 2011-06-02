@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.beimax.spacealert;
+package de.beimax.spacealert.mission;
 
 import java.util.Map;
 import java.util.Map.Entry;

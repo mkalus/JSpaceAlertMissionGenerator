@@ -1,19 +1,18 @@
 /**
  * 
  */
-package de.beimax.spacealert;
+package de.beimax.spacealert.mission;
 
 /**
  * @author mkalus
  *
  */
-public class DataTransfer implements Event {
-
+public class IncomingData implements Event {
 	/* (non-Javadoc)
 	 * @see de.beimax.spacealert.Event#getLengthInSeconds()
 	 */
 	public int getLengthInSeconds() {
-		return 15; //fairly long
+		return 6;
 	}
 
 	/**
@@ -21,7 +20,7 @@ public class DataTransfer implements Event {
 	 */
 	@Override
 	public String toString() {
-		return "Data transfer. Data transfer in 5, 4, 3, 2, 1.";
+		return "Incoming data.";
 	}
 
 	/* (non-Javadoc)
@@ -30,4 +29,5 @@ public class DataTransfer implements Event {
 	public String getDescription(int time) {
 		return toString();
 	}
+
 }

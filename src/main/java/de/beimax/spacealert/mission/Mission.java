@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.beimax.spacealert;
+package de.beimax.spacealert.mission;
 
 import java.util.ArrayList;
 import java.util.Random;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.beimax.spacealert;
+package de.beimax.spacealert.mission;
 
 /**
  * Event that can occur on missions...
