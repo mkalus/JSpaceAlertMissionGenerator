@@ -1,6 +1,9 @@
 Java Space Alert Mission Generator
 ==================================
 
+Download executable: http://dl.dropbox.com/u/9102471/JSpaceAlertMissionGenerator.jar
+
+
 Right, now the generator is quite basic: Start it from the command line and it will output a mission profile.
 It will also play the mission if you provide MP3 files in a directory called "clips" in the same directory where you execute the jar.
 
