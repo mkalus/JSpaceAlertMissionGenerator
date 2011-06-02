@@ -520,7 +520,42 @@ public class Mission {
 			currentTime += threats[i].getLengthInSeconds();
 		}
 
-		//TODO: add data transfer and incoming data
+		//add data transfers
+		// special balance: first data transfers in phase 1 and 2 should occur shortly after first threat wave
+		for (int i = 0; i < 2; i++) {
+			if (dataTransfers[i] > 0) { // if there is a data transfer
+				//TODO
+				
+			}
+		}
+		
+		// distribute rest of data transfers and incoming data randomly within the phases
+		// get start and end times
+		int startTime = 0;
+		int endTime = 0;
+		for (int i = 0; i < 3; i++) {
+			// recalculate phase times
+			startTime = endTime;
+			endTime += phaseTimes[i];
+			// data transfer first, since these are fairly long
+			for (int j = 0; j < dataTransfers[j]; j++) {
+				boolean done = false; // try until it fits
+				do {
+					// white noise can pretty much occur everywhere
+					int time = generator.nextInt(endTime - startTime) + startTime - 5; // to fend off events after mission ends
+					done = eventList.addEvent(time, new DataTransfer());
+				} while (!done);
+			}
+			// incoming data second
+			for (int j = 0; j < incomingData[j]; j++) {
+				boolean done = false; // try until it fits
+				do {
+					// white noise can pretty much occur everywhere
+					int time = generator.nextInt(endTime - startTime) + startTime - 5; // to fend off events after mission ends
+					done = eventList.addEvent(time, new IncomingData());
+				} while (!done);
+			}
+		}
 
 		//add white noise at random times
 		for (int i = 0; i < whiteNoise.length; i++) {
