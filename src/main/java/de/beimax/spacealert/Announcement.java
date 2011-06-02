@@ -65,4 +65,11 @@ public class Announcement implements Event {
 		}
 		return "ERROR"; //error
 	}
+
+	/**
+	 * Get Description
+	 */
+	public String getDescription(int time) {
+		return toString();
+	}
 }

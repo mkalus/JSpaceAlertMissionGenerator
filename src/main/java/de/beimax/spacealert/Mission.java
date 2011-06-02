@@ -5,7 +5,6 @@ package de.beimax.spacealert;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,7 +114,7 @@ public class Mission {
 	/**
 	 * white noise chunks in seconds (to distribute)
 	 */
-	private int[] whiteNoise;
+	private WhiteNoise[] whiteNoise;
 
 	/**
 	 * phase times in seconds
@@ -410,8 +409,8 @@ public class Mission {
 		}
 		
 		// ok, add chunks to mission
-		whiteNoise = new int[whiteNoiseChunks.size()];
-		for (int i = 0; i < whiteNoiseChunks.size(); i++) whiteNoise[i] = whiteNoiseChunks.get(i);
+		whiteNoise = new WhiteNoise[whiteNoiseChunks.size()];
+		for (int i = 0; i < whiteNoiseChunks.size(); i++) whiteNoise[i] = new WhiteNoise(whiteNoiseChunks.get(i));
 		
 		// add mission lengths
 		phaseTimes = new int[3];
@@ -522,7 +521,16 @@ public class Mission {
 		}
 
 		//TODO: add data transfer and incoming data
-		//TODO: add white noise
+
+		//add white noise at random times
+		for (int i = 0; i < whiteNoise.length; i++) {
+			boolean done = false; // try until it fits
+			do {
+				// white noise can pretty much occur everywhere
+				int time = generator.nextInt(phaseTimes[0] + phaseTimes[1] + phaseTimes[2] - 30) + 10;
+				done = eventList.addEvent(time, whiteNoise[i]);
+			} while (!done);
+		}
 	}
 	
 	/**

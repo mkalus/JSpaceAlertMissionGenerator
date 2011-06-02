@@ -99,7 +99,7 @@ public class EventList {
 		if (endTime > time) return false;
 
 		// check event after
-		int after = events.ceilingKey(time + length);
+		int after = events.ceilingKey(before.getKey() + 1); // next event after before key
 		if (time + length > after) return false;
 
 		return true;
@@ -113,9 +113,10 @@ public class EventList {
 		StringBuilder builder = new StringBuilder();
 		// get values
 		for(Map.Entry<Integer,Event> entry : events.entrySet()) {
-			builder.append(EventList.formatTime(entry.getKey()));
+			int time = entry.getKey();
+			builder.append(EventList.formatTime(time));
 			builder.append(" - ");
-			builder.append(entry.getValue().toString());
+			builder.append(entry.getValue().getDescription(time));
 			builder.append('\n');
 		}
 		return builder.toString();

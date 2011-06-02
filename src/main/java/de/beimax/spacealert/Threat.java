@@ -182,4 +182,11 @@ public class Threat implements Event {
 		
 		return s.toString();
 	}
+
+	/**
+	 * Get Description
+	 */
+	public String getDescription(int time) {
+		return toString();
+	}
 }
