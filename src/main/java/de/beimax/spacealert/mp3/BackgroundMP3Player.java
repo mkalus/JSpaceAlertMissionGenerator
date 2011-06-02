@@ -6,6 +6,7 @@ package de.beimax.spacealert.mp3;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javazoom.jl.decoder.JavaLayerException;
@@ -17,6 +18,9 @@ import javazoom.jl.player.Player;
  */
 public class BackgroundMP3Player extends Thread {
 	static private Logger logger = Logger.getLogger("BackgroundMP3Player");
+	static {
+		logger.setLevel(Level.WARNING);
+	}
 
 	/**
 	 * should the player stop completely?

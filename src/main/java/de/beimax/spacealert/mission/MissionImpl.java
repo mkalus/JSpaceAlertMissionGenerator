@@ -14,6 +14,9 @@ import java.util.logging.Logger;
  */
 public class MissionImpl implements Mission {
 	static private Logger logger = Logger.getLogger("MissionLogger");
+	static {
+		logger.setLevel(Level.WARNING);
+	}
 	
 	/**
 	 * configuration: threat level (8 for std game)

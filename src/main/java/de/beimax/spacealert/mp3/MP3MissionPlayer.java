@@ -4,6 +4,7 @@
 package de.beimax.spacealert.mp3;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.beimax.spacealert.mission.Event;
@@ -16,6 +17,9 @@ import de.beimax.spacealert.mission.Mission;
  */
 public class MP3MissionPlayer implements Runnable {
 	static private Logger logger = Logger.getLogger("MP3MissionPlayer");
+	static {
+		logger.setLevel(Level.WARNING);
+	}
 	
 	/**
 	 * event list of mission

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javazoom.jl.decoder.JavaLayerException;
@@ -18,6 +19,9 @@ import javazoom.jl.player.Player;
  */
 public class MP3Player extends Thread {
 	static private Logger logger = Logger.getLogger("MP3Player");
+	static {
+		logger.setLevel(Level.WARNING);
+	}
 	
 	/**
 	 * list of files to play
