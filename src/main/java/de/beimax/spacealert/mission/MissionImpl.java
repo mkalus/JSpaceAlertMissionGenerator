@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import de.beimax.spacealert.util.Options;
+
 /**
  * Default Mission Generator
  * @author mkalus
@@ -15,7 +17,9 @@ import java.util.logging.Logger;
 public class MissionImpl implements Mission {
 	static private Logger logger = Logger.getLogger("MissionLogger");
 	static {
-		logger.setLevel(Level.WARNING);
+		// debugging option set?
+		if (Options.getOptions().debug) logger.setLevel(Level.FINEST);
+		else logger.setLevel(Level.WARNING);
 	}
 	
 	/**

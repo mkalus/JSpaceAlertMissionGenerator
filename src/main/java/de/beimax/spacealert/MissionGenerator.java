@@ -5,9 +5,8 @@ package de.beimax.spacealert;
 
 import java.io.File;
 
-import de.beimax.spacealert.mission.Mission;
-import de.beimax.spacealert.mission.MissionImpl;
-import de.beimax.spacealert.mp3.MP3MissionPlayer;
+import de.beimax.spacealert.util.MavenProperties;
+import de.beimax.spacealert.util.Options;
 
 /**
  * @author mkalus
@@ -18,8 +17,22 @@ public class MissionGenerator {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
-		// generate default mission
+	public static void main(String[] args) {
+		// parse options
+		Options.parseOptions(args);
+		Options options = Options.getOptions();
+		
+		// output banner
+		if (!options.silent) {
+			// get version number from META-INF file
+			MavenProperties mavenProperties = new MavenProperties("de.beimax.spacealert", "JSpaceAlertMissionGenerator");
+			System.out.println("Java Space Alert Mission Generator - v" + mavenProperties.getVersionNumber() + "\nBuild: " + mavenProperties.getVersionTimestamp());
+		}
+		
+		// what do we want to outpout?
+		//TODO
+		
+/*		// generate default mission
 		Mission mission = new MissionImpl();
 		mission.generateMission();
 		
@@ -36,7 +49,7 @@ public class MissionGenerator {
 
 		// start it in a new thread
 		Thread playerThread = new Thread(player);
-		playerThread.start();
+		playerThread.start();*/
 	}
 	
 	/**

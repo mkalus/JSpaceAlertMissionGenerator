@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import de.beimax.spacealert.util.Options;
+
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
@@ -20,7 +22,9 @@ import javazoom.jl.player.Player;
 public class MP3Player extends Thread {
 	static private Logger logger = Logger.getLogger("MP3Player");
 	static {
-		logger.setLevel(Level.WARNING);
+		// debugging option set?
+		if (Options.getOptions().debug) logger.setLevel(Level.FINEST);
+		else logger.setLevel(Level.WARNING);
 	}
 	
 	/**

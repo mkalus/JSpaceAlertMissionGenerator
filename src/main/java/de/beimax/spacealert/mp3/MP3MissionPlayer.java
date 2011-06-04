@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import de.beimax.spacealert.mission.Event;
 import de.beimax.spacealert.mission.EventList;
 import de.beimax.spacealert.mission.Mission;
+import de.beimax.spacealert.util.Options;
 
 /**
  * MP3 Mission player (thread)
@@ -18,7 +19,9 @@ import de.beimax.spacealert.mission.Mission;
 public class MP3MissionPlayer implements Runnable {
 	static private Logger logger = Logger.getLogger("MP3MissionPlayer");
 	static {
-		logger.setLevel(Level.WARNING);
+		// debugging option set?
+		if (Options.getOptions().debug) logger.setLevel(Level.FINEST);
+		else logger.setLevel(Level.WARNING);
 	}
 	
 	/**
