@@ -34,7 +34,7 @@ Available renderers:
 
 Some Examples:
 
-java -jar JSpaceAlertMissionGenerator.jar -p text -play
+java -jar JSpaceAlertMissionGenerator.jar -p text --play
  - Print mission as English text file and start playing MP3s.
 
  -jar JSpaceAlertMissionGenerator.jar -o XML -p text -p MP3

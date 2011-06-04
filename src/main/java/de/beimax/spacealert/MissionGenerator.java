@@ -70,6 +70,6 @@ public class MissionGenerator {
 	 * print some example uses
 	 */
 	public static void printExamples() {
-		System.out.println("Some Examples:\n\njava -jar JSpaceAlertMissionGenerator.jar -p text -play\n - Print mission as English text file and start playing MP3s.\n\n -jar JSpaceAlertMissionGenerator.jar -o XML -p text -p MP3\n - Print mission as text on screen, save it as XML and\n   start playing MP3 (\"print\" MP3 translates to --play).");
+		System.out.println("Some Examples:\n\njava -jar JSpaceAlertMissionGenerator.jar -p text --play\n - Print mission as English text file and start playing MP3s.\n\n -jar JSpaceAlertMissionGenerator.jar -o XML -p text -p MP3\n - Print mission as text on screen, save it as XML and\n   start playing MP3 (\"print\" MP3 translates to --play).");
 	}
 }
