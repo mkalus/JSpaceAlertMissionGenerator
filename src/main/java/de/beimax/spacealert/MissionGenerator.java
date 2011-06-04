@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.beimax.spacealert.exec;
+package de.beimax.spacealert;
 
 import java.io.File;
 
@@ -13,7 +13,7 @@ import de.beimax.spacealert.mp3.MP3MissionPlayer;
  * @author mkalus
  *
  */
-public class MissionGeneratorCLI {
+public class MissionGenerator {
 
 	/**
 	 * @param args

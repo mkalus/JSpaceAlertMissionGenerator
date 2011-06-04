@@ -7,6 +7,7 @@
 	<name>JSpaceAlertMissionGenerator</name>
 	<description>Mission Generator for Space Alert Board Game</description>
 	<dependencies>
+		<!-- JLayer is an MP3 player: http://www.javazoom.net/javalayer/javalayer.html -->
 		<dependency>
 			<groupId>de.huxhorn.sulky</groupId>
 			<artifactId>de.huxhorn.sulky.3rdparty.jlayer</artifactId>
@@ -39,7 +40,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>de.beimax.spacealert.exec.MissionGeneratorCLI</mainClass>
+							<mainClass>de.beimax.spacealert.MissionGenerator</mainClass>
 							<packageName>de.beimax.spacealert</packageName>
 						</manifest>
 						<manifestEntries>
