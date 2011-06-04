@@ -79,7 +79,7 @@ public class CommandLine extends Thread {
 			try {
 				rendererList.add((Renderer) Class.forName("de.beimax.spacealert.render." + renderer + "Renderer").newInstance());
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				throw new Exception("Could not find renderer \"" + renderer + "\".");
 			}
 		}
 

@@ -77,9 +77,15 @@ public class Options {
 	public boolean debug = false;
 	
 	/**
+	 * start GUI?
+	 */
+	@Parameter(names = {"--list-renderers", "--renderers", "-l" }, description = "List available renderers and exit")
+	public boolean listRenderers = false;
+
+	/**
 	 * list of output commands
 	 */
-	@Parameter(names = { "--output", "-o" }, description = "Output commands e.g. text, XML, MP3")
+	@Parameter(names = { "--output", "-o" }, description = "Write mission to file using renderer, can be repeated for more renderes")
 	public List<String> output = new ArrayList<String>();
 	
 	/**
@@ -91,7 +97,7 @@ public class Options {
 	/**
 	 * list of print commands
 	 */
-	@Parameter(names = { "--print", "-p" }, description = "Print commands e.g. text, XML, MP3")
+	@Parameter(names = { "--print", "-p" }, description = "Print mission to screen using renderer, can be repeated for more renderes")
 	public List<String> print = new ArrayList<String>();
 
 	/**

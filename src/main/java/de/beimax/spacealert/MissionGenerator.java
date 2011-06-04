@@ -35,17 +35,33 @@ public class MissionGenerator {
 			return;
 		}
 		
+		// list renderers
+		if (options.listRenderers) {
+			printRenderers();
+			return;
+		}
+
 		// print help in certain cases:
 		// - parsing error
 		// - help was requested
 		// - no output/print/play option was given
 		if (!optionsOk || options.help || (!options.play && options.output.size() == 0 && options.print.size() == 0)) {
 			Options.printHelp();
+			printRenderers();
 			if (!optionsOk) System.out.println("Incorrect options.");
 			return;
 		}
 		
 		// command line execution
 		new CommandLine().start();
+	}
+	
+	/**
+	 * print a list of renderers
+	 */
+	public static void printRenderers() {
+		System.out.println("Available renderers:\n - text\n - XML\n - MP3\n");
+		//TODO: list of renderers should be dynamic in some way
+		// I cannot access JAR content, but maybe I can get maven to add a list of Renderers to manifest or so
 	}
 }
