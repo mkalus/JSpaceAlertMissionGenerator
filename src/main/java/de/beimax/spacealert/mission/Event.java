@@ -30,4 +30,10 @@ public interface Event {
 	 * @return comma separated list of MP3s
 	 */
 	public String getMP3s(int time);
+	
+	/**
+	 * return XML attributes for XML output
+	 * @return
+	 */
+	public String getXMLAttributes(int time);
 }

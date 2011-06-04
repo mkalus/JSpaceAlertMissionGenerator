@@ -5,6 +5,7 @@ package de.beimax.spacealert.mission;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -115,6 +116,14 @@ public class EventList {
 		if (time > events.lastKey()) return null;
 		
 		return events.ceilingEntry(time);
+	}
+	
+	/**
+	 * returns the entry set itself
+	 * @return Set<Map.Entry<Integer,Event>> set of events
+	 */
+	public Set<Map.Entry<Integer,Event>> getEntrySet() {
+		return events.entrySet();
 	}
 
 	/**

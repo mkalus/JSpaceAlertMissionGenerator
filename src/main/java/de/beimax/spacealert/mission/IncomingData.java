@@ -36,4 +36,11 @@ public class IncomingData implements Event {
 	public String getMP3s(int time) {
 		return "incoming_data.mp3";
 	}
+	
+	/**
+	 * get XML attributes
+	 */
+	public String getXMLAttributes(int time) {
+		return "type=\"IncomingData\"";
+	}
 }

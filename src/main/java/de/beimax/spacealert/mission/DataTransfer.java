@@ -37,4 +37,11 @@ public class DataTransfer implements Event {
 	public String getMP3s(int time) {
 		return "data_transfer.mp3";
 	}
+	
+	/**
+	 * get XML attributes
+	 */
+	public String getXMLAttributes(int time) {
+		return "type=\"DataTransfer\"";
+	}
 }

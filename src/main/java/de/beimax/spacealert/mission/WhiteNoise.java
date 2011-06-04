@@ -59,4 +59,11 @@ public class WhiteNoise implements Event {
 
 		return sb.toString();
 	}
+	
+	/**
+	 * get XML attributes
+	 */
+	public String getXMLAttributes(int time) {
+		return "type=\"CommFailure\" duration=\"" + length + "000\"";
+	}
 }

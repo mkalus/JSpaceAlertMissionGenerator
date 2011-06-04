@@ -148,6 +148,16 @@ public class MissionImpl implements Mission {
 	}
 
 	/**
+	 * Return length of a phase in seconds
+	 * @param phase 1-3
+	 * @return phase length of mission or -1
+	 */
+	public int getMissionPhaseLength(int phase) {
+		if (phase < 1 || phase > phaseTimes.length) return -1;
+		return phaseTimes[phase-1];
+	}
+
+	/**
 	 * Generate new mission
 	 * 
 	 * @return true if mission creation succeeded

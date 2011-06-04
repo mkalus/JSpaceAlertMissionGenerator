@@ -91,4 +91,26 @@ public class Announcement implements Event {
 		}
 		return null;
 	}
+	
+	/**
+	 * get XML attributes
+	 */
+	public String getXMLAttributes(int time) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("type=\"Announcement\" message=\"");
+		switch (type) {
+		case ANNOUNCEMENT_PH1_START: sb.append("AnnounceBeginFirstPhase"); break;
+		case ANNOUNCEMENT_PH1_ONEMINUTE: sb.append("AnnounceFirstPhaseEndsInOneMinute"); break;
+		case ANNOUNCEMENT_PH1_TWENTYSECS: sb.append("AnnounceFirstPhaseEndsInTwentySeconds"); break;
+		case ANNOUNCEMENT_PH1_ENDS: sb.append("AnnounceFirstPhaseEnds"); break; // begin of third phase printed in renderer itself
+		case ANNOUNCEMENT_PH2_ONEMINUTE: sb.append("AnnounceSecondPhaseEndsInOneMinute"); break;
+		case ANNOUNCEMENT_PH2_TWENTYSECS: sb.append("AnnounceSecondPhaseEndsInTwentySeconds"); break;
+		case ANNOUNCEMENT_PH2_ENDS: sb.append("AnnounceSecondPhaseEnds"); break; // begin of third phase printed in renderer itself
+		case ANNOUNCEMENT_PH3_ONEMINUTE: sb.append("AnnounceThirdPhaseEndsInOneMinute"); break;
+		case ANNOUNCEMENT_PH3_TWENTYSECS: sb.append("AnnounceThirdPhaseEndsInTwentySeconds"); break;
+		case ANNOUNCEMENT_PH3_ENDS: sb.append("AnnounceThirdPhaseEnds"); break;
+		}
+		sb.append('"');
+		return sb.toString();
+	}
 }

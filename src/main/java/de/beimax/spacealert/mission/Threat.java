@@ -236,4 +236,26 @@ public class Threat implements Event {
 
 		return sb.toString();
 	}
+	
+	/**
+	 * get XML attributes
+	 */
+	public String getXMLAttributes(int time) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("type=\"Threat\" confidence=\"").append(confirmed?"Confirmed":"Unconfirmed").
+			append("\" threatLevel=\"").append(threatLevel == THREAT_LEVEL_SERIOUS?"SeriousThreat":"NormalThreat").
+			append("\" threatType=\"").append(threatPosition == THREAT_POSITION_INTERNAL?"InternalThreat":"ExternalThreat").
+			append("\" time=\"").append(this.time).append('"');
+		if (threatPosition != THREAT_POSITION_INTERNAL) {
+			sb.append(" zone=\"");
+			switch (sector) {
+			case THREAT_SECTOR_BLUE: sb.append("Blue"); break;
+			case THREAT_SECTOR_WHITE: sb.append("White"); break;
+			case THREAT_SECTOR_RED: sb.append("Red"); break;
+			}
+			sb.append('"');
+		}
+		return sb.toString();
+	}
 }

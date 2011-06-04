@@ -20,4 +20,11 @@ public interface Mission {
 	 * @return ordered event list of mission
 	 */
 	public EventList getMissionEvents();
+	
+	/**
+	 * Return length of a phase in seconds
+	 * @param phase 1-3
+	 * @return phase length of mission or -1
+	 */
+	public int getMissionPhaseLength(int phase);
 }
