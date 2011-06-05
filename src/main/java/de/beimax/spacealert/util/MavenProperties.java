@@ -1,5 +1,5 @@
 /**
- * 
+ * Part of JSpaceAlertMissionGenerator
  */
 package de.beimax.spacealert.util;
 
