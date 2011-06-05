@@ -236,7 +236,7 @@ public class Threat implements Event {
 
 		return sb.toString();
 	}
-	
+
 	/**
 	 * get XML attributes
 	 */
@@ -256,6 +256,37 @@ public class Threat implements Event {
 			}
 			sb.append('"');
 		}
+		return sb.toString();
+	}
+	
+	/**
+	 * get flash player code
+	 * Alerts have the following format: 'mssAL#TZ' or 'mmssAL#TZ'
+	 * m = minute when the Alert occurs
+	 * ss = seconds when the Alert occurs
+	 * AL is the code for Alerts
+	 * # = TimeT code for the alert (valid numbers = 1-8)
+	 * T = Threat Code (T=Threat, ST=Serious Threat, IT=Internal Threat, SIT=Serious Internal Threat)
+	 * Z = Zone where the alert occurs (R=Red, W=White, B=Blue)
+	 */
+	public String getFlashPlayerCode(int time) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(confirmed?"AL":"UR").append(this.time);
+		// internal/external?
+		if (threatPosition == THREAT_POSITION_INTERNAL) {
+			if (threatLevel == THREAT_LEVEL_SERIOUS) {
+				sb.append("SIT");
+			} else sb.append("IT");
+		} else if (threatLevel == THREAT_LEVEL_SERIOUS) {
+			sb.append("ST");
+		} else sb.append('T');
+		if (threatPosition != THREAT_POSITION_INTERNAL) {
+			switch (sector) {
+			case THREAT_SECTOR_BLUE: sb.append("B"); break;
+			case THREAT_SECTOR_WHITE: sb.append("W"); break;
+			case THREAT_SECTOR_RED: sb.append("R"); break;
+			}
+		}		
 		return sb.toString();
 	}
 }

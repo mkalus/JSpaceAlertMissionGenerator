@@ -66,4 +66,11 @@ public class WhiteNoise implements Event {
 	public String getXMLAttributes(int time) {
 		return "type=\"CommFailure\" duration=\"" + length + "000\"";
 	}
+	
+	/**
+	 * get flash player code
+	 */
+	public String getFlashPlayerCode(int time) {
+		return "CS" + length;
+	}
 }

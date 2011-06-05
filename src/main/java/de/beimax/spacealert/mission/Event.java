@@ -36,4 +36,10 @@ public interface Event {
 	 * @return
 	 */
 	public String getXMLAttributes(int time);
+	
+	/**
+	 * return Flash player code
+	 * @return
+	 */
+	public String getFlashPlayerCode(int time);
 }

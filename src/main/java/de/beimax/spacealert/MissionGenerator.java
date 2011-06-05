@@ -61,7 +61,7 @@ public class MissionGenerator {
 	 * print a list of renderers
 	 */
 	public static void printRenderers() {
-		System.out.println("Available renderers:\n - text\n - XML\n - MP3\n");
+		System.out.println("Available renderers:\n - text\n - XML\n - MP3\n - FlashPlayerCode\n");
 		//TODO: list of renderers should be dynamic in some way
 		// I cannot access JAR content, but maybe I can get maven to add a list of Renderers to manifest or so
 	}

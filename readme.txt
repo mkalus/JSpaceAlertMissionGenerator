@@ -34,6 +34,7 @@ Available renderers:
  - text
  - XML
  - MP3
+ - FlashPlayerCode
 
 
 Some Examples:
@@ -61,7 +62,7 @@ Known bugs:
 
 Planed additions:
 
-- output options: code for flash-player, mp3-file
+- MP3 file export (generating an MP3 file of the whole mission)
 - GUI...
 
 

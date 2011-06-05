@@ -43,4 +43,11 @@ public class IncomingData implements Event {
 	public String getXMLAttributes(int time) {
 		return "type=\"IncomingData\"";
 	}
+	
+	/**
+	 * get flash player code
+	 */
+	public String getFlashPlayerCode(int time) {
+		return "ID";
+	}
 }

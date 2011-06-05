@@ -113,4 +113,17 @@ public class Announcement implements Event {
 		sb.append('"');
 		return sb.toString();
 	}
+	
+	/**
+	 * get flash player code
+	 */
+	public String getFlashPlayerCode(int time) {
+		// special here - generally only phase lengths have to be defined
+		switch (type) {
+		case ANNOUNCEMENT_PH1_ENDS: return "1";
+		case ANNOUNCEMENT_PH2_ENDS: return "2";
+		case ANNOUNCEMENT_PH3_ENDS: return "3";
+		}
+		return null;
+	}
 }

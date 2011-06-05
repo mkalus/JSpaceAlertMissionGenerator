@@ -44,4 +44,11 @@ public class DataTransfer implements Event {
 	public String getXMLAttributes(int time) {
 		return "type=\"DataTransfer\"";
 	}
+	
+	/**
+	 * get flash player code
+	 */
+	public String getFlashPlayerCode(int time) {
+		return "DT";
+	}
 }
