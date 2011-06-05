@@ -27,7 +27,7 @@ public class IncomingData implements Event {
 	 * @see de.beimax.spacealert.Event#getLengthInSeconds()
 	 */
 	public int getLengthInSeconds() {
-		return 8;
+		return 10;
 	}
 
 	/**
