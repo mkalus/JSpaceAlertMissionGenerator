@@ -18,11 +18,15 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
     --output, -o                        Write mission to file using renderer,
                                         can be repeated for more renderes
                                         Default: []
-        --play                          Play MP3 after printing and outputting
+    --play, -x                          Play MP3 after printing and outputting
                                         Default: false
     --print, -p                         Print mission to screen using renderer,
                                         can be repeated for more renderes
                                         Default: []
+        --print-seed                    Print the seed number at the beginning
+                                        of the mission
+                                        Default: false
+        --seed                          Set a random number generator seed
     --silent, -s                        Silent mode
                                         Default: false
 

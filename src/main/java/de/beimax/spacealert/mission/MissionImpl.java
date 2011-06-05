@@ -148,8 +148,18 @@ public class MissionImpl implements Mission {
 	 * Constructor
 	 */
 	public MissionImpl() {
+		// get Options
+		Options options = Options.getOptions();
+		
+		long seed;
+		if (options.seed == null) seed = System.nanoTime() + 8682522807148012L;
+		else seed = (long) options.seed;
 		// random number generator
-		generator = new Random();
+		generator = new Random(seed);
+		
+		// print out seed?
+		if (options.printSeed)
+			System.out.println("Random number generator seed: " +  seed);
 	}
 	
 	/**

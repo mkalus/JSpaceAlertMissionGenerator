@@ -103,8 +103,20 @@ public class Options {
 	/**
 	 * do we want to play MP3?
 	 */
-	@Parameter(names = { "--play" }, description = "Play MP3 after printing and outputting")
+	@Parameter(names = { "--play", "-x" }, description = "Play MP3 after printing and outputting")
 	public boolean play = false;
+	
+	/**
+	 * seed for random number generator
+	 */
+	@Parameter(names = "--seed", description = "Set a random number generator seed")
+	public Long seed = null;
+	
+	/**
+	 * print the seed of the number generator
+	 */
+	@Parameter(names = "--print-seed", description = "Print the seed number at the beginning of the mission")
+	public boolean printSeed = false;
 	
 	/**
 	 * start GUI?
