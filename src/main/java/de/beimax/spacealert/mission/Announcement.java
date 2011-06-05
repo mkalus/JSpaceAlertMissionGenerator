@@ -34,14 +34,14 @@ public class Announcement implements Event {
 	public int getLengthInSeconds() {
 		switch (type) {
 		case ANNOUNCEMENT_PH1_START: return 11;
-		case ANNOUNCEMENT_PH1_ONEMINUTE: return 4;
-		case ANNOUNCEMENT_PH1_TWENTYSECS: return 4;
+		case ANNOUNCEMENT_PH1_ONEMINUTE: return 5;
+		case ANNOUNCEMENT_PH1_TWENTYSECS: return 5;
 		case ANNOUNCEMENT_PH1_ENDS: return 11;
-		case ANNOUNCEMENT_PH2_ONEMINUTE: return 4;
-		case ANNOUNCEMENT_PH2_TWENTYSECS: return 4;
+		case ANNOUNCEMENT_PH2_ONEMINUTE: return 5;
+		case ANNOUNCEMENT_PH2_TWENTYSECS: return 5;
 		case ANNOUNCEMENT_PH2_ENDS: return 11;
-		case ANNOUNCEMENT_PH3_ONEMINUTE: return 4;
-		case ANNOUNCEMENT_PH3_TWENTYSECS: return 4;
+		case ANNOUNCEMENT_PH3_ONEMINUTE: return 5;
+		case ANNOUNCEMENT_PH3_TWENTYSECS: return 5;
 		case ANNOUNCEMENT_PH3_ENDS: return 12;
 		}
 		return -1; //error

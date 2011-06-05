@@ -25,7 +25,7 @@ public class WhiteNoise implements Event {
 	 * white noise time is the the time it takes...
 	 */
 	public int getLengthInSeconds() {
-		return length;
+		return length + 2; // +2 to avoid collisions with other anouncements/ leave a little space between
 	}
 
 	/**

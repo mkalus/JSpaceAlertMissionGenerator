@@ -25,7 +25,7 @@ public class Threat implements Event {
 	 * assumed time in seconds: 10
 	 */
 	public int getLengthInSeconds() {
-		return 14;
+		return 15;
 	}
 	
 	/**

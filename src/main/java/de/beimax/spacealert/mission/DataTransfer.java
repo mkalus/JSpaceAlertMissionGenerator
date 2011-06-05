@@ -13,7 +13,7 @@ public class DataTransfer implements Event {
 	 * @see de.beimax.spacealert.Event#getLengthInSeconds()
 	 */
 	public int getLengthInSeconds() {
-		return 15; //fairly long
+		return 16; //fairly long
 	}
 
 	/**
