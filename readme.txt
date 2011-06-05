@@ -85,3 +85,8 @@ mvn install
 
 The executable will be compiled in:
 target/JSpaceAlertMissionGenerator-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+
+
+If you do not use Maven2, you will need following libraries:
+- JLayer is an MP3 player (LGPL-Licence): http://www.javazoom.net/javalayer/javalayer.html
+- Options Parser (Apache Licence): http://jcommander.org/
