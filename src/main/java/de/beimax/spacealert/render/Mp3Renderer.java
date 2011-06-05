@@ -16,7 +16,7 @@ public class Mp3Renderer implements Renderer {
 	 * @see de.beimax.spacealert.render.Renderer#print(de.beimax.spacealert.mission.Mission)
 	 */
 	public boolean print(Mission mission) {
-		// get options
+		/*// get options
 		Options options = Options.getOptions();
 		
 		// check file name/size
@@ -25,7 +25,10 @@ public class Mp3Renderer implements Renderer {
 		}
 		
 		// TODO not yet supported
-		return false;
+		return false;*/
+		
+		System.out.println("Sorry, MP3 export to files is not supported.");
+		return true;
 	}
 
 	/* (non-Javadoc)
