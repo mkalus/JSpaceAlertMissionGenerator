@@ -13,9 +13,22 @@ import de.beimax.spacealert.util.Options;
 public class Mp3Renderer implements Renderer {
 
 	/* (non-Javadoc)
-	 * @see de.beimax.spacealert.render.Renderer#print(de.beimax.spacealert.mission.Mission)
+	 * @see de.beimax.spacealert.render.Renderer#output(de.beimax.spacealert.mission.Mission)
 	 */
 	public boolean print(Mission mission) {
+		// convert output MP3 to play
+		Options options = Options.getOptions();
+		if (!options.silent) {
+			System.out.println("Converting --print MP3 to --play.");
+		}
+		options.play = true;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.beimax.spacealert.render.Renderer#print(de.beimax.spacealert.mission.Mission)
+	 */
+	public boolean output(Mission mission) {
 		/*// get options
 		Options options = Options.getOptions();
 		
@@ -28,19 +41,6 @@ public class Mp3Renderer implements Renderer {
 		return false;*/
 		
 		System.out.println("Sorry, MP3 export to files is not supported.");
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.beimax.spacealert.render.Renderer#output(de.beimax.spacealert.mission.Mission)
-	 */
-	public boolean output(Mission mission) {
-		// convert output MP3 to play
-		Options options = Options.getOptions();
-		if (!options.silent) {
-			System.out.println("Converting --print MP3 to --play.");
-		}
-		options.play = true;
 		return true;
 	}
 

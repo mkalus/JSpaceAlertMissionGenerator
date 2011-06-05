@@ -60,10 +60,13 @@ Have fun!
 Known bugs:
 - currently none
 
-Planed additions:
+Planed additions and wishlist:
 
+- configuration via command line options
+- double action mission generation
+- import of XML, Flash File Code and text
 - MP3 file export (generating an MP3 file of the whole mission)
-- GUI...
+- graphical GUI
 
 
 
