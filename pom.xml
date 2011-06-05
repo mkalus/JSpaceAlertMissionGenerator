@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.beimax.spacealert</groupId>
 	<artifactId>JSpaceAlertMissionGenerator</artifactId>
-	<version>0.9.4</version>
+	<version>1.0.0</version>
 	<name>JSpaceAlertMissionGenerator</name>
 	<description>Mission Generator for Space Alert Board Game</description>
 	<dependencies>
