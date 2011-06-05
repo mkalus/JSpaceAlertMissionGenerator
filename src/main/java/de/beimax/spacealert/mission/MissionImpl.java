@@ -140,6 +140,19 @@ public class MissionImpl implements Mission {
 	EventList eventList;
 	
 	/**
+	 * random number generator
+	 */
+	Random generator;
+	
+	/**
+	 * Constructor
+	 */
+	public MissionImpl() {
+		// random number generator
+		generator = new Random();
+	}
+	
+	/**
 	 * Return event list of mission
 	 * @return ordered event list of mission
 	 */
@@ -194,9 +207,6 @@ public class MissionImpl implements Mission {
 	 * @return true if generation was successful
 	 */
 	protected boolean generateThreats() {
-		// random number generator
-		Random generator = new Random();
-		
 		// number of internal threats
 		int internalThreats = generator.nextInt(maxInternalThreats - minInternalThreats + 1) + minInternalThreats;
 		int externalThreats = threatLevel - internalThreats;
@@ -373,9 +383,6 @@ public class MissionImpl implements Mission {
 	 * @return true, if data creation could be generated
 	 */
 	protected boolean generateDataOperations() {
-		// random number generator
-		Random generator = new Random();
-		
 		// clear data
 		incomingData = new int[3];
 		dataTransfers = new int[3];
@@ -413,9 +420,6 @@ public class MissionImpl implements Mission {
 	 * simple generation of times for phases, white noise etc.
 	 */
 	protected void generateTimes() {
-		// random number generator
-		Random generator = new Random();
-		
 		// generate white noise
 		int whiteNoiseTime = generator.nextInt(maxWhiteNoise - minWhiteNoise + 1) + minWhiteNoise;
 		logger.fine("White noise time: " + whiteNoiseTime);
@@ -471,9 +475,6 @@ public class MissionImpl implements Mission {
 	 */
 	protected void generatePhases() {
 		logger.info("Data gathered: Generating phases.");
-
-		// random number generator
-		Random generator = new Random();
 
 		// create events
 		eventList = new EventList();
