@@ -207,8 +207,13 @@ public class MissionImpl implements Mission {
 		generateTimes();
 
 		//generate phases
-		generatePhases();
-		
+		generated = false; tries = 100;
+		do {generated = generatePhases();} while(!generated && tries-- > 0);
+		if (!generated) {
+			logger.warning("Giving up creating phase details.");
+			return false; //fail
+		}
+
 		return false;
 	}
 	
@@ -482,8 +487,9 @@ public class MissionImpl implements Mission {
 	
 	/**
 	 * generate phase stuff from data above
+	 * @return true if phase generation succeeded
 	 */
-	protected void generatePhases() {
+	protected boolean generatePhases() {
 		logger.info("Data gathered: Generating phases.");
 
 		// create events
@@ -524,14 +530,20 @@ public class MissionImpl implements Mission {
 			if (threats[i] == null) continue;
 			// first event?
 			if (first) {
-				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list - arg!");
+				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list (time " + currentTime + ") - arg!");
 				first = false;
 			} else {
 				boolean done = false; // try until it fits
 				int nextTime = 0;
+				int tries = 0; // number of tries
 				do {
 					// next threat appears
-					nextTime = generator.nextInt((lastTime - currentTime) / 2) + 5;
+					// next element occurs
+					int divisor = 2;
+					if (++tries > 10) divisor = 3;
+					else if (tries > 20) divisor = 4;
+					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
+					if (tries > 30) return false;
 					done = eventList.addEvent(currentTime + nextTime, threats[i]);
 				} while (!done);
 				currentTime += nextTime;
@@ -569,14 +581,19 @@ public class MissionImpl implements Mission {
 			if (threats[i] == null) continue;
 			// first event?
 			if (first) {
-				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list in second phase - arg!");
+				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list in second phase (time " + currentTime + ") - arg!");
 				first = false;
 			} else {
 				boolean done = false; // try until it fits
 				int nextTime = 0;
+				int tries = 0; // number of tries
 				do {
 					// next element occurs
-					nextTime = generator.nextInt((lastTime - currentTime) / 2) + 5;
+					int divisor = 2;
+					if (++tries > 10) divisor = 3;
+					else if (tries > 20) divisor = 4;
+					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
+					if (tries > 30) return false;
 					done = eventList.addEvent(currentTime + nextTime, threats[i]);
 				} while (!done);
 				currentTime += nextTime;
@@ -645,6 +662,8 @@ public class MissionImpl implements Mission {
 				done = eventList.addEvent(time, whiteNoise[i]);
 			} while (!done);
 		}
+		
+		return true;
 	}
 	
 	/**
