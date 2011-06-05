@@ -33,13 +33,13 @@ public class Announcement implements Event {
 	 */
 	public int getLengthInSeconds() {
 		switch (type) {
-		case ANNOUNCEMENT_PH1_START: return 11;
+		case ANNOUNCEMENT_PH1_START: return 10; // if you make this higher, also check "- arg" stuff in missionImpl
 		case ANNOUNCEMENT_PH1_ONEMINUTE: return 5;
 		case ANNOUNCEMENT_PH1_TWENTYSECS: return 5;
 		case ANNOUNCEMENT_PH1_ENDS: return 11;
 		case ANNOUNCEMENT_PH2_ONEMINUTE: return 5;
 		case ANNOUNCEMENT_PH2_TWENTYSECS: return 5;
-		case ANNOUNCEMENT_PH2_ENDS: return 11;
+		case ANNOUNCEMENT_PH2_ENDS: return 10; // if you make this higher, also check "- arg" stuff in missionImpl
 		case ANNOUNCEMENT_PH3_ONEMINUTE: return 5;
 		case ANNOUNCEMENT_PH3_TWENTYSECS: return 5;
 		case ANNOUNCEMENT_PH3_ENDS: return 12;
