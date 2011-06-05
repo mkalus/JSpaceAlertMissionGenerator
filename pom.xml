@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.beimax.spacealert</groupId>
 	<artifactId>JSpaceAlertMissionGenerator</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>JSpaceAlertMissionGenerator</name>
 	<description>Mission Generator for Space Alert Board Game</description>
 	<dependencies>
-		<!-- JLayer is an MP3 player: http://www.javazoom.net/javalayer/javalayer.html -->
+		<!-- JLayer is an MP3 player (LGPL-Licence): http://www.javazoom.net/javalayer/javalayer.html -->
 		<dependency>
 			<groupId>de.huxhorn.sulky</groupId>
 			<artifactId>de.huxhorn.sulky.3rdparty.jlayer</artifactId>
@@ -15,7 +15,7 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Options Parser: http://jcommander.org/ -->
+		<!-- Options Parser (Apache Licence): http://jcommander.org/ -->
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
@@ -67,4 +67,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+	</modules>
 </project>
