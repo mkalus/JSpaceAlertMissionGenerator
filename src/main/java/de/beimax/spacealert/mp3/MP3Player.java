@@ -19,8 +19,8 @@
 package de.beimax.spacealert.mp3;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +41,11 @@ public class MP3Player extends Thread {
 		if (Options.getOptions().debug) logger.setLevel(Level.FINEST);
 		else logger.setLevel(Level.WARNING);
 	}
+	
+	/**
+	 * file cacher
+	 */
+	static private MP3Cache cache = MP3Cache.getSingleton();
 	
 	/**
 	 * list of files to play
@@ -99,10 +104,12 @@ public class MP3Player extends Thread {
 				if (files[i].indexOf(':') != -1) {
 					file = files[i].split(":")[0];
 				}
-				InputStream is = new FileInputStream("clips" + File.separator + file);
+				InputStream is = cache.getMP3InputStream(file);
 				players[i] = new Player(is);
 			} catch(FileNotFoundException e) {
 				logger.warning("Could not find file " + "clips" + File.pathSeparator + files[i]);
+			} catch(IOException e) {
+				logger.warning("I/O Exception reading " + "clips" + File.pathSeparator + files[i] + ":" + e.getMessage());
 			} catch (JavaLayerException e) {
 				logger.warning("JavaLayerException: " + e.getMessage());
 			}
@@ -153,9 +160,9 @@ public class MP3Player extends Thread {
 			if (remainingTime <= 1) return; // no need to start miniclips
 			// start special player again
 			try {
-				Player newPlayer = new Player(new FileInputStream("clips" + File.separator + file));
+				Player newPlayer = new Player(cache.getMP3InputStream(file));
 				playSpecial(newPlayer, remainingTime, index);
-			} catch (FileNotFoundException e) {}
+			} catch (IOException e) {}
 		} else
 			player.close();
 	}

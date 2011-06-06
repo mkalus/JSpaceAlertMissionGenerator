@@ -122,9 +122,15 @@ public class Options {
 	public boolean play = false;
 	
 	/**
+	 * print the seed of the number generator
+	 */
+	@Parameter(names = { "--clips-folder", "-c" }, description = "Folder in which MP3 clips are stored")
+	public String clipsFolder = "clips";
+
+	/**
 	 * seed for random number generator
 	 */
-	@Parameter(names = "--seed", description = "Set a random number generator seed")
+	@Parameter(names = { "--seed", "-S" }, description = "Set a random number generator seed")
 	public Long seed = null;
 	
 	/**

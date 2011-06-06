@@ -18,9 +18,8 @@
  **/
 package de.beimax.spacealert.mp3;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +39,11 @@ public class BackgroundMP3Player extends Thread {
 		if (Options.getOptions().debug) logger.setLevel(Level.FINEST);
 		else logger.setLevel(Level.WARNING);
 	}
+
+	/**
+	 * file cacher
+	 */
+	static private MP3Cache cache = MP3Cache.getSingleton();
 
 	/**
 	 * should the player stop completely?
@@ -121,7 +125,7 @@ public class BackgroundMP3Player extends Thread {
 	 */
 	private void startMusicPlaying() {
 		try {
-			player = new Player(new FileInputStream("clips" + File.separator + "red_alert_" + (noiseNumber++) + ".mp3"));
+			player = new Player(cache.getMP3InputStream("red_alert_" + (noiseNumber++) + ".mp3"));
 			final Player myPlayer = player;
 			// reset noise if too high
 			if (noiseNumber >= '4') noiseNumber = '0';
@@ -137,6 +141,8 @@ public class BackgroundMP3Player extends Thread {
 			t.start();
 		} catch (FileNotFoundException e) {
 			logger.warning("Background sound not found: " + e.getMessage());
+		} catch(IOException e) {
+			logger.warning("I/O Exception reading background sounds:" + e.getMessage());
 		} catch (JavaLayerException e) {
 			logger.warning("MP3-Player exception: " + e.getMessage());
 		}
