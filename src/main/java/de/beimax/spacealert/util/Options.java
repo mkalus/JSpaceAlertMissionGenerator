@@ -142,6 +142,6 @@ public class Options {
 	/**
 	 * start GUI?
 	 */
-	@Parameter(names = { "--gui", "-g" }, description = "Start GUI", hidden = true) //hidden at the moment
+	@Parameter(names = { "--gui", "-g" }, description = "Start GUI")
 	public boolean gui = false;
 }

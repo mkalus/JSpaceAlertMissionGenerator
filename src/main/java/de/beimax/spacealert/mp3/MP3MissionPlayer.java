@@ -48,6 +48,21 @@ public class MP3MissionPlayer implements Runnable {
 	 * background player
 	 */
 	BackgroundMP3Player backgroundPlayer;
+	
+	/**
+	 * current player
+	 */
+	MP3Player player;
+	
+	/**
+	 * player interruption?
+	 */
+	private boolean stop = false;
+	
+	/**
+	 * player has finished?
+	 */
+	private boolean finished = false;
 
 	/**
 	 * Constructor
@@ -76,6 +91,10 @@ public class MP3MissionPlayer implements Runnable {
 			// wait for event time
 			while(System.currentTimeMillis() - start < ((long) nextEventAt) * 1000) {
 				try {
+					if (stop) {
+						stopMyself();
+						return;
+					}
 					Thread.sleep(100);
 				} catch (InterruptedException e) {}
 			};
@@ -83,7 +102,7 @@ public class MP3MissionPlayer implements Runnable {
 			int eventTime = nextEvent.getKey();
 			logger.info("Event " + EventList.formatTime(eventTime) + " - " + event.getDescription(eventTime));
 			
-			MP3Player player = new MP3Player(event.getMP3s(eventTime), backgroundPlayer);
+			player = new MP3Player(event.getMP3s(eventTime), backgroundPlayer);
 			player.start();
 			
 			// get next event
@@ -95,6 +114,39 @@ public class MP3MissionPlayer implements Runnable {
 		// stop the thread completely
 		backgroundPlayer.stopThread();
 		
+		// finished
+		finished = true;
+		
 		logger.info("MP3MissionPlayer finished");
+	}
+
+	/**
+	 * returns true, if finished
+	 */
+	public boolean isFinished() {
+		return finished;
+	}
+
+	/**
+	 * set the stop signal for the player
+	 */
+	public void stopPlayer() {
+		this.stop = true;
+	}
+
+	/**
+	 * stops the MP3 player - called by myself
+	 */
+	private void stopMyself() {
+		logger.info("MP3Player has received stop signal - waiting for MP3s to finish.");
+		backgroundPlayer.stopThread();
+		// wait for current thread to finish
+		while (player.isAlive()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {}
+		}
+		finished = true;
+		logger.info("MP3Player has been stopped.");
 	}
 }

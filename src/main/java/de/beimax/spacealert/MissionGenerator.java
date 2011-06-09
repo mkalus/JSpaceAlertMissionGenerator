@@ -19,6 +19,7 @@
 package de.beimax.spacealert;
 
 import de.beimax.spacealert.exec.CommandLine;
+import de.beimax.spacealert.exec.Gui;
 import de.beimax.spacealert.util.MavenProperties;
 import de.beimax.spacealert.util.Options;
 
@@ -45,8 +46,7 @@ public class MissionGenerator {
 		
 		// start GUI?
 		if (options.gui && !options.help) {
-			System.out.println("GUI is not implemented yet.");
-			// this will redirect to the GUI once implemented
+			new Gui();
 			return;
 		}
 		
