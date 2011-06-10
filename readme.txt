@@ -7,10 +7,14 @@ Download executable: http://dl.dropbox.com/u/9102471/JSpaceAlertMissionGenerator
 Start with: java -jar JSpaceAlertMissionGenerator.jar
 
   Options:
+    --clips-folder, -c                  Folder in which MP3 clips are stored
+                                        Default: clips
     --debug, -D                         Debug mode
                                         Default: false
     --filename, -f                      Output file name prefix
                                         Default: mission
+    --gui, -g                           Start GUI
+                                        Default: false
     --help, -h                          Print help and exit
                                         Default: false
     --list-renderers, --renderers, -l   List available renderers and exit
@@ -26,7 +30,7 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
         --print-seed                    Print the seed number at the beginning
                                         of the mission
                                         Default: false
-        --seed                          Set a random number generator seed
+    --seed, -S                          Set a random number generator seed
     --silent, -s                        Silent mode
                                         Default: false
 
