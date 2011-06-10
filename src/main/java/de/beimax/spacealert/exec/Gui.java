@@ -72,12 +72,16 @@ public class Gui extends JFrame implements ActionListener {
 		startMissionBtn.setActionCommand("actionBtnPressed");
 		startMissionBtn.addActionListener(this);
 		startMissionBtn.setPreferredSize(new Dimension(200, 50));
-		pane.add(startMissionBtn, BorderLayout.PAGE_END);
+		pane.add(startMissionBtn, BorderLayout.SOUTH);
 
 		// text area
 		missionOutputTArea = new JTextArea();
 		missionOutputTArea.setPreferredSize(new Dimension(600, 500));
 		missionOutputTArea.setEditable(false);
+		// line wrap on
+		missionOutputTArea.setLineWrap(true);
+		missionOutputTArea.setWrapStyleWord(true);
+		// scrollable
 		JScrollPane scrollPane = new JScrollPane(missionOutputTArea); // add scroller
 		pane.add(scrollPane, BorderLayout.CENTER);
 
@@ -106,15 +110,6 @@ public class Gui extends JFrame implements ActionListener {
 	 *  @param mission to play
 	 */
 	private void playMP3(Mission mission) {
-		// get options
-		Options options = Options.getOptions();
-
-		// check for clips directory
-		if (!checkForClipDirectory(options.clipsFolder)) {
-			missionOutputTArea.append("In order to play the MP3 clips, you need to download a set of MP3 files and save them in a directory named clips (or specified by --clips-folder option) in the same directory as the jar.\nLook at http://sites.google.com/site/boardgametools/SpaceAlertMissionGenerator.\nGerman and English Sound sets are included in the the Space Alert Mission Generator. You can also look into the forums on http://www.boardgamegeek.com/ which provide some language files for Japanese and so on.");
-			return;
-		}
-		
 		logger.info("Starting MP3 playback thread.");
 		
 		// create mp3 player
@@ -129,12 +124,24 @@ public class Gui extends JFrame implements ActionListener {
 	 * start a mission
 	 */
 	private void startMission() {
-		// change button
-		startMissionBtn.setText("Stop Mission!");
-		
 		// generate default mission
 		mission = new MissionImpl();
 		mission.generateMission();
+
+		// get options
+		Options options = Options.getOptions();
+		
+		// check for clips directory
+		if (!checkForClipDirectory(options.clipsFolder)) {
+			missionOutputTArea.setText(mission.toString());
+			missionOutputTArea.append("\nIn order to play the MP3 clips, you need to download a set of MP3 files and save them in a directory named clips (or specified by --clips-folder option) in the same directory as the jar.\nLook at http://sites.google.com/site/boardgametools/SpaceAlertMissionGenerator.\nGerman and English Sound sets are included in the the Space Alert Mission Generator. You can also look into the forums on http://www.boardgamegeek.com/ which provide some language files for Japanese and so on.");
+			// delete mission
+			mission = null;
+			return;
+		}
+
+		// change button
+		startMissionBtn.setText("Stop Mission!");
 		
 		// output text
 		missionOutputTArea.setText(mission.toString());
