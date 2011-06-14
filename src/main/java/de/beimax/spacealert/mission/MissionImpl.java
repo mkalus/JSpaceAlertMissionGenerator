@@ -260,6 +260,14 @@ public class MissionImpl implements Mission {
 
 		// get sums
 		int threatsSum = normalThreats + seriousThreats;
+
+		// if threat level is higher than 8, create serious threats until we have a threat level of 8 or lower
+		// thanks to Leif Norcott from BoardGameGeek
+		while (threatsSum > 8) {
+			normalThreats -= 2;
+			seriousThreats++;
+			threatsSum = normalThreats + seriousThreats;
+		}
 		
 		// distribute unconfirmed
 		int seriousUnconfirmed = generator.nextInt(threatUnconfirmed / 2 + 1);
