@@ -172,6 +172,39 @@ public class MissionImpl implements Mission {
 		// random number generator
 		generator = new Random(seed);
 		
+		// copy variables from options
+		threatLevel = options.threatLevel;
+		threatUnconfirmed = options.threatUnconfirmed;
+		minInternalThreats = options.minInternalThreats;
+		maxInternalThreats = options.maxInternalThreats;
+		maxInternalThreatsNumber = options.maxInternalThreatsNumber;
+		minTNormalExternalThreat = options.minTNormalExternalThreat;
+		maxTNormalExternalThreat = options.maxTNormalExternalThreat;
+		minTSeriousExternalThreat = options.minTSeriousExternalThreat;
+		maxTSeriousExternalThreat = options.maxTSeriousExternalThreat;
+		minTNormalInternalThreat = options.minTNormalInternalThreat;
+		maxTNormalInternalThreat = options.maxTNormalInternalThreat;
+		minTSeriousInternalThreat = options.minTSeriousInternalThreat;
+		maxTSeriousInternalThreat = options.maxTSeriousInternalThreat;
+		minDataOperations = new int[]{ options.minDataOperations1, options.minDataOperations2, options.minDataOperations3 };
+		maxDataOperations = new int[]{ options.maxDataOperations1, options.maxDataOperations2, options.maxDataOperations3 };
+		minIncomingData = new int[]{ options.minIncomingData1, options.minIncomingData2, options.minIncomingData3 };
+		maxIncomingData = new int[]{ options.maxIncomingData1, options.maxIncomingData2, options.maxIncomingData3 };
+		minIncomingDataTotal = options.minIncomingDataTotal;
+		minDataTransfer = new int[]{ options.minDataTransfer1, options.minDataTransfer1, options.minDataTransfer3 };
+		maxDataTransfer = new int[]{ options.maxDataTransfer1, options.maxDataTransfer2, options.maxDataTransfer3 };
+		minDataTransferTotal = options.minDataTransferTotal;
+		minWhiteNoise = options.minWhiteNoise;
+		maxWhiteNoise = options.maxWhiteNoise;
+		minWhiteNoiseTime = options.minWhiteNoiseTime;
+		maxWhiteNoiseTime = options.maxWhiteNoiseTime;
+		minPhaseTime = new int[]{ options.minPhaseTime1, options.minPhaseTime2, options.minPhaseTime3 };
+		maxPhaseTime = new int[]{ options.maxPhaseTime1, options.maxPhaseTime2, options.maxPhaseTime3 };
+		minTimeForFirst = new int[]{ options.minTimeForFirst1, options.minTimeForFirst2 };
+		maxTimeForFirst = new int[]{ options.maxTimeForFirst1, options.maxTimeForFirst2 };
+		chanceForAmbush = new int[] { options.chanceForAmbush1, options.chanceForAmbush2 };
+		threatsWithInPercent = options.threatsWithInPercent;
+		
 		// print out seed?
 		if (options.printSeed)
 			System.out.println("Random number generator seed: " +  seed);

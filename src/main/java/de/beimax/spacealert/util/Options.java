@@ -94,7 +94,7 @@ public class Options {
 	/**
 	 * start GUI?
 	 */
-	@Parameter(names = {"--list-renderers", "--renderers", "-l" }, description = "List available renderers and exit")
+	@Parameter(names = {"--list-renderers", "--renderers", "-L" }, description = "List available renderers and exit")
 	public boolean listRenderers = false;
 
 	/**
@@ -144,4 +144,164 @@ public class Options {
 	 */
 	@Parameter(names = { "--gui", "-g" }, description = "Start GUI")
 	public boolean gui = false;
+	
+	/**
+	 * threat level
+	 */
+	@Parameter(names = { "--threat-level", "-l" }, description = "Threat level of mission (should be <= 14)")
+	public int threatLevel = 8;
+	
+	/**
+	 * unconfirmed threats
+	 */
+	@Parameter(names = { "--unconfirmed-threat-level", "-u" }, description = "Threat level unconfirmed threats")
+	public int threatUnconfirmed = 1;
+
+	/**
+	 * ...of which x levels are internal
+	 */
+	@Parameter(names = { "--min-internal-level", "-i" }, description = "Minimum levels of internal threats")
+	public int minInternalThreats = 1;
+	@Parameter(names = { "--max-internal-level", "-I" }, description = "Maximum levels of internal threats")
+	public int maxInternalThreats = 3;
+	@Parameter(names = { "--max-internal-threats" }, description = "Maximum number of internal threats")
+	public int maxInternalThreatsNumber = 2; // number of internal threats max
+	
+	/**
+	 * minimum and maximum time in which normal threats can occur
+	 */
+	@Parameter(names = { "--min-time-normal-external" }, description = "Minimum time in which normal external threats will occur")
+	public int minTNormalExternalThreat = 1;
+	@Parameter(names = { "--max-time-normal-external" }, description = "Maximum time in which normal external threats will occur")
+	public int maxTNormalExternalThreat = 8;
+	
+	/**
+	 * minimum and maximum time in which serious threats can occur
+	 */
+	@Parameter(names = { "--min-time-serious-external" }, description = "Minimum time in which serious external threats will occur")
+	public int minTSeriousExternalThreat = 2;
+	@Parameter(names = { "--max-time-serious-external" }, description = "Maximum time in which serious external threats will occur")
+	public int maxTSeriousExternalThreat = 7;
+	
+	/**
+	 * minimum and maximum time in which normal threats can occur
+	 */
+	@Parameter(names = { "--min-time-normal-internal" }, description = "Minimum time in which normal internal threats will occur")
+	public int minTNormalInternalThreat = 2;
+	@Parameter(names = { "--max-time-normal-internal" }, description = "Maximum time in which normal internal threats will occur")
+	public int maxTNormalInternalThreat = 7;
+	
+	/**
+	 * minimum and maximum time in which serious threats can occur
+	 */
+	@Parameter(names = { "--min-time-serious-internal" }, description = "Minimum time in which serious internal threats will occur")
+	public int minTSeriousInternalThreat = 3;
+	@Parameter(names = { "--max-time-serious-internal" }, description = "Maximum time in which serious internal threats will occur")
+	public int maxTSeriousInternalThreat = 6;
+	
+	/**
+	 * minimum data operations (either data transfer or incoming data)
+	 */
+	@Parameter(names = { "--min-data-operations-1" }, description = "Minimum data operations in phase 1")
+	public int minDataOperations1 = 2;
+	@Parameter(names = { "--max-data-operations-1" }, description = "Maximum data operations in phase 1")
+	public int maxDataOperations1 = 3;
+	@Parameter(names = { "--min-data-operations-2" }, description = "Minimum data operations in phase 2")
+	public int minDataOperations2 = 2;
+	@Parameter(names = { "--max-data-operations-2" }, description = "Maximum data operations in phase 2")
+	public int maxDataOperations2 = 3;
+	@Parameter(names = { "--min-data-operations-3" }, description = "Minimum data operations in phase 3")
+	public int minDataOperations3 = 0;
+	@Parameter(names = { "--max-data-operations-3" }, description = "Maximum data operations in phase 3")
+	public int maxDataOperations3 = 1;
+	
+	/**
+	 * minimum and maximum incoming data by phases
+	 */
+	@Parameter(names = { "--min-incoming-data-1" }, description = "Minimum incoming data in phase 1")
+	public int minIncomingData1 = 1;
+	@Parameter(names = { "--max-incoming-data-1" }, description = "Maximum incoming data in phase 1")
+	public int maxIncomingData1 = 3;
+	@Parameter(names = { "--min-incoming-data-2" }, description = "Minimum incoming data in phase 2")
+	public int minIncomingData2 = 0;
+	@Parameter(names = { "--max-incoming-data-2" }, description = "Maximum incoming data in phase 2")
+	public int maxIncomingData2 = 2;
+	@Parameter(names = { "--min-incoming-data-3" }, description = "Minimum incoming data in phase 3")
+	public int minIncomingData3 = 0;
+	@Parameter(names = { "--max-incoming-data-3" }, description = "Maximum incoming data in phase 3")
+	public int maxIncomingData3 = 2;
+	@Parameter(names = { "--min-incoming-data" }, description = "Minimum incoming data in all phases")
+	public int minIncomingDataTotal = 2;
+	
+	/**
+	 * minimum and maximum data transfers by phases
+	 */
+	@Parameter(names = { "--min-data-transfers-1" }, description = "Minimum data transfers (data operation and incoming data) in phase 1")
+	public int minDataTransfer1 = 0;
+	@Parameter(names = { "--max-data-transfers-1" }, description = "Maximum data transfers (data operation and incoming data) in phase 1")
+	public int maxDataTransfer1 = 1;
+	@Parameter(names = { "--min-data-transfers-2" }, description = "Minimum data transfers (data operation and incoming data) in phase 2")
+	public int minDataTransfer2 = 1;
+	@Parameter(names = { "--max-data-transfers-2" }, description = "Maximum data transfers (data operation and incoming data) in phase 2")
+	public int maxDataTransfer2 = 2;
+	@Parameter(names = { "--min-data-transfers-3" }, description = "Minimum data transfers (data operation and incoming data) in phase 3")
+	public int minDataTransfer3 = 1;
+	@Parameter(names = { "--max-data-transfers-3" }, description = "Maximum data transfers (data operation and incoming data) in phase 3")
+	public int maxDataTransfer3 = 1;
+	@Parameter(names = { "--min-data-transfers" }, description = "Minimum data transfers (data operation and incoming data) in all phases")
+	public int minDataTransferTotal = 3;
+	
+	/**
+	 * minimum and maximum time for white noise
+	 */
+	@Parameter(names = { "--min-whitenoise-total" }, description = "Minimum time of whitenoise in total")
+	public int minWhiteNoise = 45;
+	@Parameter(names = { "--max-whitenoise-total" }, description = "Maximum time of whitenoise in total")
+	public int maxWhiteNoise = 60;
+	@Parameter(names = { "--min-whitenoise-single" }, description = "Minimum time of whitenoise of a single communication break")
+	public int minWhiteNoiseTime = 9;
+	@Parameter(names = { "--max-whitenoise-single" }, description = "Maximum time of whitenoise of a single communication break")
+	public int maxWhiteNoiseTime = 20;
+	
+	/**
+	 * minimum and maximum time for phases
+	 */
+	@Parameter(names = { "--min-phase-time-1" }, description = "Minimum phase time for phase 1")
+	public int minPhaseTime1 = 205;
+	@Parameter(names = { "--max-phase-time-1" }, description = "Maximum phase time for phase 1")
+	public int maxPhaseTime1 = 240;
+	@Parameter(names = { "--min-phase-time-2" }, description = "Minimum phase time for phase 2")
+	public int minPhaseTime2 = 180;
+	@Parameter(names = { "--max-phase-time-2" }, description = "Maximum phase time for phase 2")
+	public int maxPhaseTime2 = 225;
+	@Parameter(names = { "--min-phase-time-3" }, description = "Minimum phase time for phase 3")
+	public int minPhaseTime3 = 140;
+	@Parameter(names = { "--max-phase-time-3" }, description = "Maximum phase time for phase 3")
+	public int maxPhaseTime3 = 155;
+	
+	/**
+	 * times for first threats to appear
+	 */
+	@Parameter(names = { "--min-time-for-threat-1" }, description = "Minimum time for first threat to appear in phase 1")
+	public int minTimeForFirst1 = 10;
+	@Parameter(names = { "--max-time-for-threat-1" }, description = "Maximum time for first threat to appear in phase 1")
+	public int maxTimeForFirst1 = 20;
+	@Parameter(names = { "--min-time-for-threat-2" }, description = "Minimum time for first threat to appear in phase 2")
+	public int minTimeForFirst2 = 10;
+	@Parameter(names = { "--max-time-for-threat-2" }, description = "Maximum time for first threat to appear in phase 2")
+	public int maxTimeForFirst2 = 40;
+	
+	/**
+	 * chance for ambush in phases 4/8 in %
+	 */
+	@Parameter(names = { "--chance-for-ambush-1" }, description = "Chance in percent for ambush in phase 4")
+	public int chanceForAmbush1 = 40;
+	@Parameter(names = { "--chance-for-ambush-2" }, description = "Chance in percent for ambush in phase 8")
+	public int chanceForAmbush2 = 40;
+	
+	/**
+	 * "middle" threats (2+3/5+6) should appear with % of phase length
+	 */
+	@Parameter(names = { "--threats-within-percent" }, description = "Threats appear within this percentage of a phase")
+	public int threatsWithInPercent = 70;
 }

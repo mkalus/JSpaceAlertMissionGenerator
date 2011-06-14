@@ -7,6 +7,10 @@ Download executable: http://dl.dropbox.com/u/9102471/JSpaceAlertMissionGenerator
 Start with: java -jar JSpaceAlertMissionGenerator.jar
 
   Options:
+        --chance-for-ambush-1           Chance in percent for ambush in phase 4
+                                        Default: 40
+        --chance-for-ambush-2           Chance in percent for ambush in phase 8
+                                        Default: 40
     --clips-folder, -c                  Folder in which MP3 clips are stored
                                         Default: clips
     --debug, -D                         Debug mode
@@ -17,8 +21,119 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
                                         Default: false
     --help, -h                          Print help and exit
                                         Default: false
-    --list-renderers, --renderers, -l   List available renderers and exit
+    --list-renderers, --renderers, -L   List available renderers and exit
                                         Default: false
+        --max-data-operations-1         Maximum data operations in phase 1
+                                        Default: 3
+        --max-data-operations-2         Maximum data operations in phase 2
+                                        Default: 3
+        --max-data-operations-3         Maximum data operations in phase 3
+                                        Default: 1
+        --max-data-transfers-1          Maximum data transfers (data operation
+                                        and incoming data) in phase 1
+                                        Default: 1
+        --max-data-transfers-2          Maximum data transfers (data operation
+                                        and incoming data) in phase 2
+                                        Default: 2
+        --max-data-transfers-3          Maximum data transfers (data operation
+                                        and incoming data) in phase 3
+                                        Default: 1
+        --max-incoming-data-1           Maximum incoming data in phase 1
+                                        Default: 3
+        --max-incoming-data-2           Maximum incoming data in phase 2
+                                        Default: 2
+        --max-incoming-data-3           Maximum incoming data in phase 3
+                                        Default: 2
+    --max-internal-level, -I            Maximum levels of internal threats
+                                        Default: 3
+        --max-internal-threats          Maximum number of internal threats
+                                        Default: 2
+        --max-phase-time-1              Maximum phase time for phase 1
+                                        Default: 240
+        --max-phase-time-2              Maximum phase time for phase 2
+                                        Default: 225
+        --max-phase-time-3              Maximum phase time for phase 3
+                                        Default: 155
+        --max-time-for-threat-1         Maximum time for first threat to appear
+                                        in phase 1
+                                        Default: 20
+        --max-time-for-threat-2         Maximum time for first threat to appear
+                                        in phase 2
+                                        Default: 40
+        --max-time-normal-external      Maximum time in which normal external
+                                        threats will occur
+                                        Default: 8
+        --max-time-normal-internal      Maximum time in which normal internal
+                                        threats will occur
+                                        Default: 7
+        --max-time-serious-external     Maximum time in which serious external
+                                        threats will occur
+                                        Default: 7
+        --max-time-serious-internal     Maximum time in which serious internal
+                                        threats will occur
+                                        Default: 6
+        --max-whitenoise-single         Maximum time of whitenoise of a single
+                                        communication break
+                                        Default: 20
+        --max-whitenoise-total          Maximum time of whitenoise in total
+                                        Default: 60
+        --min-data-operations-1         Minimum data operations in phase 1
+                                        Default: 2
+        --min-data-operations-2         Minimum data operations in phase 2
+                                        Default: 2
+        --min-data-operations-3         Minimum data operations in phase 3
+                                        Default: 0
+        --min-data-transfers            Minimum data transfers (data operation
+                                        and incoming data) in all phases
+                                        Default: 3
+        --min-data-transfers-1          Minimum data transfers (data operation
+                                        and incoming data) in phase 1
+                                        Default: 0
+        --min-data-transfers-2          Minimum data transfers (data operation
+                                        and incoming data) in phase 2
+                                        Default: 1
+        --min-data-transfers-3          Minimum data transfers (data operation
+                                        and incoming data) in phase 3
+                                        Default: 1
+        --min-incoming-data             Minimum incoming data in all phases
+                                        Default: 2
+        --min-incoming-data-1           Minimum incoming data in phase 1
+                                        Default: 1
+        --min-incoming-data-2           Minimum incoming data in phase 2
+                                        Default: 0
+        --min-incoming-data-3           Minimum incoming data in phase 3
+                                        Default: 0
+    --min-internal-level, -i            Minimum levels of internal threats
+                                        Default: 1
+        --min-phase-time-1              Minimum phase time for phase 1
+                                        Default: 205
+        --min-phase-time-2              Minimum phase time for phase 2
+                                        Default: 180
+        --min-phase-time-3              Minimum phase time for phase 3
+                                        Default: 140
+        --min-time-for-threat-1         Minimum time for first threat to appear
+                                        in phase 1
+                                        Default: 10
+        --min-time-for-threat-2         Minimum time for first threat to appear
+                                        in phase 2
+                                        Default: 10
+        --min-time-normal-external      Minimum time in which normal external
+                                        threats will occur
+                                        Default: 1
+        --min-time-normal-internal      Minimum time in which normal internal
+                                        threats will occur
+                                        Default: 2
+        --min-time-serious-external     Minimum time in which serious external
+                                        threats will occur
+                                        Default: 2
+        --min-time-serious-internal     Minimum time in which serious internal
+                                        threats will occur
+                                        Default: 3
+        --min-whitenoise-single         Minimum time of whitenoise of a single
+                                        communication break
+                                        Default: 9
+        --min-whitenoise-total          Minimum time of whitenoise in total
+                                        Default: 45
     --output, -o                        Write mission to file using renderer,
                                         can be repeated for more renderes
                                         Default: []
@@ -33,6 +148,14 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
     --seed, -S                          Set a random number generator seed
     --silent, -s                        Silent mode
                                         Default: false
+    --threat-level, -l                  Threat level of mission (should be <=
+                                        14)
+                                        Default: 8
+        --threats-within-percent        Threats appear within this percentage of
+                                        a phase
+                                        Default: 70
+    --unconfirmed-threat-level, -u      Threat level unconfirmed threats
+                                        Default: 1
 
 Available renderers:
  - text
