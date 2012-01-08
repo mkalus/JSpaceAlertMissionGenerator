@@ -427,6 +427,8 @@ public class MissionImpl implements Mission {
 			threats[newThreat.getTime()-1] = newThreat;
 		} // for (int i = 0; i < threatsSum; i++) {
 		
+		// TODO: check if there are two internal threats in a row - if there are, redo mission
+		
 		// now sort mission entries and generate attack sectors
 		int lastSector = -1;
 		for (int i = 0; i < 8; i++) {
