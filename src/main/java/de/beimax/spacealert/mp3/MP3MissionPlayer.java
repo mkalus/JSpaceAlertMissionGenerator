@@ -67,9 +67,11 @@ public class MP3MissionPlayer implements Runnable {
 	/**
 	 * Constructor
 	 * @param mission
+	 * @param alarm
 	 */
-	public MP3MissionPlayer(Mission mission) {
+	public MP3MissionPlayer(Mission mission, BackgroundMP3Player alarm) {
 		events = mission.getMissionEvents(); // just get events
+		backgroundPlayer = alarm; // do not start player right away, it will be started by the first player anyway
 	}
 
 	/**
@@ -81,8 +83,7 @@ public class MP3MissionPlayer implements Runnable {
 		long start = System.currentTimeMillis();
 		int nextEventAt = 0;
 		
-		// create BackgroundMP3Player
-		backgroundPlayer =  new BackgroundMP3Player(); // do not start player right away, it will be started by the first player anyway
+		// start BackgroundMP3Player
 		backgroundPlayer.start();
 		
 		// get next event

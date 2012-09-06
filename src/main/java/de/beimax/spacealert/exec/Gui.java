@@ -20,6 +20,7 @@ import javax.swing.JTextArea;
 
 import de.beimax.spacealert.mission.Mission;
 import de.beimax.spacealert.mission.MissionImpl;
+import de.beimax.spacealert.mp3.BackgroundMP3PlayerFactory;
 import de.beimax.spacealert.mp3.MP3MissionPlayer;
 import de.beimax.spacealert.util.Options;
 
@@ -113,7 +114,7 @@ public class Gui extends JFrame implements ActionListener {
 		logger.info("Starting MP3 playback thread.");
 		
 		// create mp3 player
-		player = new MP3MissionPlayer(mission);
+		player = new MP3MissionPlayer(mission, BackgroundMP3PlayerFactory.getBackgroundMP3Player(Options.getOptions().backgroundAlarm));
 
 		// start it in a new thread
 		Thread playerThread = new Thread(player);

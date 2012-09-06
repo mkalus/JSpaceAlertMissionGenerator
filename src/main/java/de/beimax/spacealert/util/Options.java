@@ -74,7 +74,7 @@ public class Options {
 
 	// Options come here
 	/**
-	 * silent mode - do not print banner and the like
+	 * print help and exit
 	 */
 	@Parameter(names = { "--help", "-h" }, description = "Print help and exit")
 	public boolean help = false;
@@ -120,7 +120,13 @@ public class Options {
 	 */
 	@Parameter(names = { "--play", "-x" }, description = "Play MP3 after printing and outputting")
 	public boolean play = false;
-	
+
+	/**
+	 * do we want to play MP3?
+	 */
+	@Parameter(names = { "--alarm" }, description = "Set background alarm (normal,none,fixed). Fixed means that background alarm will not become louder.")
+	public String backgroundAlarm = "normal";
+
 	/**
 	 * print the seed of the number generator
 	 */

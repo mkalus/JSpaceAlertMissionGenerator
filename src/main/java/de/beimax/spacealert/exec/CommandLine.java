@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import de.beimax.spacealert.mission.Mission;
 import de.beimax.spacealert.mission.MissionImpl;
+import de.beimax.spacealert.mp3.BackgroundMP3PlayerFactory;
 import de.beimax.spacealert.mp3.MP3MissionPlayer;
 import de.beimax.spacealert.render.Renderer;
 import de.beimax.spacealert.util.Options;
@@ -147,7 +148,7 @@ public class CommandLine extends Thread {
 		if (!options.silent) System.out.println("Starting MP3 playback.");
 		
 		// create mp3 player
-		MP3MissionPlayer player = new MP3MissionPlayer(mission);
+		MP3MissionPlayer player = new MP3MissionPlayer(mission, BackgroundMP3PlayerFactory.getBackgroundMP3Player(options.backgroundAlarm));
 
 		// start it in a new thread
 		Thread playerThread = new Thread(player);
