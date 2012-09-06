@@ -7,6 +7,10 @@ Download executable: http://dl.dropbox.com/u/9102471/JSpaceAlertMissionGenerator
 Start with: java -jar JSpaceAlertMissionGenerator.jar
 
   Options:
+        --alarm                         Set background alarm
+                                        (normal,none,fixed). Fixed means that background
+                                        alarm will not become louder.
+                                        Default: normal
         --chance-for-ambush-1           Chance in percent for ambush in phase 4
                                         Default: 40
         --chance-for-ambush-2           Chance in percent for ambush in phase 8
