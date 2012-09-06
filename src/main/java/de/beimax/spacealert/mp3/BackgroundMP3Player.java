@@ -61,11 +61,6 @@ public class BackgroundMP3Player extends Thread {
 	private Player player;
 	
 	/**
-	 * noise number reference - to differenciate a little bit
-	 */
-	private char noiseNumber = '0';
-	
-	/**
 	 * stop the thread completely
 	 */
 	public void stopThread() {
@@ -125,10 +120,8 @@ public class BackgroundMP3Player extends Thread {
 	 */
 	private void startMusicPlaying() {
 		try {
-			player = new Player(cache.getMP3InputStream("red_alert_" + (noiseNumber++) + ".mp3"));
+			player = new Player(cache.getMP3InputStream("red_alert_2.mp3"));
 			final Player myPlayer = player;
-			// reset noise if too high
-			if (noiseNumber >= '4') noiseNumber = '0';
 			// anonymous runnable
 			Runnable r = new Runnable() {
 				public void run() {
