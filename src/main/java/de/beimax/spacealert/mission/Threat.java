@@ -20,6 +20,8 @@ package de.beimax.spacealert.mission;
 
 import java.io.File;
 
+import de.beimax.spacealert.util.Options;
+
 /**
  * Threat class
  * 
@@ -216,7 +218,7 @@ public class Threat implements Event {
 		// check clip directory for english or german type files
 		// ...why did these guys even split this up?
 		boolean german = false;
-		if (new File("clips" + File.separator + "threat_zone_blue.mp3").isFile()) german = true;
+		if (new File(Options.getOptions().clipsFolder + File.separator + "threat_zone_blue.mp3").isFile()) german = true;
 		
 		// start
 		if (!confirmed) sb.append("unconfirmed_report.mp3,");
