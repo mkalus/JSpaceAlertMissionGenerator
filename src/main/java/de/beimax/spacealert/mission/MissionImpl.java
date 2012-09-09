@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.beimax.spacealert.util.Options;
+import de.beimax.spacealert.mission.ThreatGroup;
 
 /**
  * Default Mission Generator
@@ -344,12 +345,23 @@ public class MissionImpl implements Mission {
 		
 		// free memory
 		ArrayList<Integer> phases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
-		for (int i = 0; i < threatsFirstPhase; i++) phases.add(phaseOne.get(i));
-		for (int i = 0; i < threatsSecondPhase; i++) phases.add(phaseTwo.get(i));
+		ArrayList<Integer> internalphases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
+		for (int i = 0; i < threatsFirstPhase; i++) {
+			phases.add(phaseOne.get(i));
+			internalphases.add(phaseOne.get(i));
+		}
+		for (int i = 0; i < threatsSecondPhase; i++) {
+			phases.add(phaseTwo.get(i));
+			internalphases.add(phaseTwo.get(i));
+		}
 		phaseOne = null; phaseTwo = null;
 
+
 		// create threats by level
-		threats = new Threat[8];
+		threats = new ThreatGroup[8];
+		for (int i = 0; i < 8; i++) {
+			threats[i] = new ThreatGroup();
+		}
 		// counter for maximum internal threats
 		int internalThreatsNumber = 0;
 		//statistics counter to make internal threats likely, too
@@ -401,6 +413,10 @@ public class MissionImpl implements Mission {
 			do {
 				int idx = generator.nextInt(phases.size());
 				int phase = phases.get(idx).intValue();
+				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					idx = generator.nextInt(internalphases.size());
+					phase = internalphases.get(idx).intValue();
+				}
 				if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
 					if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
 						if (phase < minTSeriousExternalThreat || phase > maxTSeriousExternalThreat) continue;
@@ -416,7 +432,14 @@ public class MissionImpl implements Mission {
 				}
 				found = true;
 				newThreat.setTime(phase);
-				phases.remove(idx);
+				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					if (idx < internalphases.size() - 1) {
+						internalphases.remove(idx+1);
+					}
+					internalphases.remove(idx);
+				} else {
+					phases.remove(idx);					
+				}
 			} while(!found && maxCounter-- > 0);
 			if (!found) {
 				logger.info("Could not create mission due to phase restrictions. Redoing.");
@@ -424,7 +447,11 @@ public class MissionImpl implements Mission {
 			}
 
 			//System.out.println(newThreat);
-			threats[newThreat.getTime()-1] = newThreat;
+			if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+				threats[newThreat.getTime() - 1].addInternal(newThreat);
+			} else {				
+				threats[newThreat.getTime() - 1].addExternal(newThreat);
+			}
 		} // for (int i = 0; i < threatsSum; i++) {
 		
 		// TODO: check if there are two internal threats in a row - if there are, redo mission
@@ -432,22 +459,31 @@ public class MissionImpl implements Mission {
 		// now sort mission entries and generate attack sectors
 		int lastSector = -1;
 		for (int i = 0; i < 8; i++) {
-			if (threats[i] != null && threats[i].getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
+			Threat x = threats[i].getExternal();
+			if (x != null) {
 				switch(generator.nextInt(3)) {
-				case 0: if (lastSector != Threat.THREAT_SECTOR_BLUE) threats[i].setSector(Threat.THREAT_SECTOR_BLUE);
-						else threats[i].setSector(Threat.THREAT_SECTOR_WHITE); break;
-				case 1: if (lastSector != Threat.THREAT_SECTOR_WHITE) threats[i].setSector(Threat.THREAT_SECTOR_WHITE);
-						else threats[i].setSector(Threat.THREAT_SECTOR_RED); break;
-				case 2: if (lastSector != Threat.THREAT_SECTOR_RED) threats[i].setSector(Threat.THREAT_SECTOR_RED);
-						else threats[i].setSector(Threat.THREAT_SECTOR_BLUE); break;
+				case 0: if (lastSector != Threat.THREAT_SECTOR_BLUE) x.setSector(Threat.THREAT_SECTOR_BLUE);
+						else x.setSector(Threat.THREAT_SECTOR_WHITE); break;
+				case 1: if (lastSector != Threat.THREAT_SECTOR_WHITE) x.setSector(Threat.THREAT_SECTOR_WHITE);
+						else x.setSector(Threat.THREAT_SECTOR_RED); break;
+				case 2: if (lastSector != Threat.THREAT_SECTOR_RED) x.setSector(Threat.THREAT_SECTOR_RED);
+						else x.setSector(Threat.THREAT_SECTOR_BLUE); break;
 				default: System.out.println("No Way!");
 				}
-				lastSector = threats[i].getSector();
+				threats[i].addExternal(x);
+				lastSector = x.getSector();
+		
 			}
+
 
 			//if (threats[i] != null) System.out.println(threats[i]);
 		}
 		
+//		for (int i = 0; i < 8; i++) {
+//			System.out.println(i);
+//			System.out.println(threats[i].getInternal());
+//			System.out.println(threats[i].getExternal());
+//		}
 		return true;
 	}
 	

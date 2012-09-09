@@ -38,7 +38,17 @@ public class ThreatGroup {
 		}
 		return false;
 	}
+
+	public boolean setExternal(Threat e) {
+		external = e;
+		return true;
+	}
 	
+	public boolean setInternal(Threat e) {
+		internal = e;
+		return true;
+	}
+
 	public Threat removeInternal() {
 		Threat ret = internal;
 		internal = null;
