@@ -204,8 +204,8 @@ public class MissionImpl implements Mission {
 		threatsWithInPercent = options.threatsWithInPercent;
 		
 		// print out seed?
-		if (options.printSeed)
-			System.out.println("Random number generator seed: " +  seed);
+//		if (options.printSeed)
+//			System.out.println("Random number generator seed: " +  seed);
 	}
 	
 	/**
