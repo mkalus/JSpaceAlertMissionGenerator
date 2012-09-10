@@ -285,10 +285,15 @@ public class MissionImpl implements Mission {
 		int normalThreats =  threatLevel - seriousThreats * 2;
 		
 		logger.fine("Normal Threats: " + normalThreats + "; Serious Threats: " + seriousThreats);
-		
+
 		// if there are 8 normal threats - check again, if we really want this
-		if (normalThreats == 8 && generator.nextInt(3) != 0) {
-			logger.info("8 normal threats unlikely. Redoing.");
+		if (normalThreats >= 8 && generator.nextInt(3) != 0) {
+			logger.info("8 or more normal threats unlikely. Redoing.");
+			return false;
+		}
+
+		if ((seriousThreats == (threatLevel / 2) || seriousThreats >= 5) && generator.nextInt(3) != 0) {
+			logger.info("all (or 5 or more) serious threats unlikely. Redoing.");
 			return false;
 		}
 
