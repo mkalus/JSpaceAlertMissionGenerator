@@ -433,10 +433,13 @@ public class MissionImpl implements Mission {
 				found = true;
 				newThreat.setTime(phase);
 				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
-					if (idx < internalphases.size() - 1) {
-						internalphases.remove(idx+1);
-					}
 					internalphases.remove(idx);
+					for (int z = 0; z < internalphases.size(); z++) {
+						if (internalphases.get(z).intValue() == z) {
+							internalphases.remove(z);
+							break;
+						}
+					}
 				} else {
 					phases.remove(idx);					
 				}
