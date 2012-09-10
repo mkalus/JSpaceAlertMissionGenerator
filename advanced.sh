@@ -1,5 +1,4 @@
 java -jar target/JSpaceAlertMissionGenerator-1.2.0-jar-with-dependencies.jar \
-	-p text \
 	--unconfirmed-threat-level 0 \
 	--threat-level 10 \
 	--min-phase-time-1 285 --max-phase-time-1 305 \
