@@ -166,12 +166,9 @@ public class MissionImpl implements Mission {
 	public MissionImpl() {
 		// get Options
 		Options options = Options.getOptions();
-		
-		long seed;
-		if (options.seed == null) seed = System.nanoTime() + 8682522807148012L;
-		else seed = (long) options.seed;
-		// random number generator
-		generator = new Random(seed);
+
+		if (options.seed == null) generator = new Random(); 
+	        else generator = new Random((long)options.seed);
 		
 		// copy variables from options
 		threatLevel = options.threatLevel;
