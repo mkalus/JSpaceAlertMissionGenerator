@@ -645,6 +645,7 @@ public class MissionImpl implements Mission {
 					int divisor = 2;
 					if (++tries > 10) divisor = 3;
 					else if (tries > 20) divisor = 4;
+					if (lastTime < currentTime) return false;
 					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
 					if (tries > 30) return false;
 					done = eventList.addEvent(currentTime + nextTime, activeThreat);
@@ -704,6 +705,7 @@ public class MissionImpl implements Mission {
 					int divisor = 2;
 					if (++tries > 10) divisor = 3;
 					else if (tries > 20) divisor = 4;
+					if (lastTime < currentTime) return false;
 					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
 					if (tries > 30) return false;
 					done = eventList.addEvent(currentTime + nextTime, activeThreat);
@@ -746,7 +748,7 @@ public class MissionImpl implements Mission {
 			startTime = endTime;
 			endTime += phaseTimes[i];
 			// data transfer first, since these are fairly long
-			for (int j = 0; j < dataTransfers[j]; j++) {
+			for (int j = 0; j < dataTransfers[i]; j++) {
 				boolean done = false; // try until it fits
 				do {
 					// white noise can pretty much occur everywhere
