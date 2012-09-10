@@ -435,11 +435,14 @@ public class MissionImpl implements Mission {
 				found = true;
 				newThreat.setTime(phase);
 				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					int dropPhase = internalphases.get(idx).intValue() + 1;
 					internalphases.remove(idx);
-					for (int z = 0; z < internalphases.size(); z++) {
-						if (internalphases.get(z).intValue() == z) {
-							internalphases.remove(z);
-							break;
+					if (generator.nextInt(3) != 0) {
+						for (int z = 0; z < internalphases.size(); z++) {
+							if (internalphases.get(z).intValue() == dropPhase) {
+								internalphases.remove(z);
+								break;
+							}
 						}
 					}
 				} else {
@@ -650,7 +653,7 @@ public class MissionImpl implements Mission {
 					int divisor = 2;
 					if (++tries > 10) divisor = 3;
 					else if (tries > 20) divisor = 4;
-					if (lastTime < currentTime) return false;
+					if (lastTime <= currentTime) return false;
 					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
 					if (tries > 30) return false;
 					done = eventList.addEvent(currentTime + nextTime, activeThreat);
@@ -710,7 +713,7 @@ public class MissionImpl implements Mission {
 					int divisor = 2;
 					if (++tries > 10) divisor = 3;
 					else if (tries > 20) divisor = 4;
-					if (lastTime < currentTime) return false;
+					if (lastTime <= currentTime) return false;
 					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
 					if (tries > 30) return false;
 					done = eventList.addEvent(currentTime + nextTime, activeThreat);

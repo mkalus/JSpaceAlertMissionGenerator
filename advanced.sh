@@ -21,6 +21,8 @@ java -jar target/JSpaceAlertMissionGenerator-1.2.0-jar-with-dependencies.jar \
 	--min-data-operations-3 1 \
 	--max-internal-level 4 \
 	--max-internal-threats 3 \
+	--min-time-serious-internal 2 \
+	--min-time-serious-external 1 \
 	$*
 #
 #	--max-incoming-data 3 \
