@@ -4,11 +4,11 @@
 
 # To save the mission to a text file for check, and start the
 # sound:
-# ./advanced.sh -o txt --play
+# ./advanced.sh -o text --play
 
 # To print the mission to the screen for check, and start the
 # sound:
-# ./advanced.sh -p txt --play
+# ./advanced.sh -p text --play
 
 java -jar target/JSpaceAlertMissionGenerator-1.2.0-jar-with-dependencies.jar \
 	--unconfirmed-threat-level 0 \
