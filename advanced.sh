@@ -1,3 +1,15 @@
+#!/bin/bash
+
+# Usual invocation:
+
+# To save the mission to a text file for check, and start the
+# sound:
+# ./advanced.sh -o txt --play
+
+# To print the mission to the screen for check, and start the
+# sound:
+# ./advanced.sh -p txt --play
+
 java -jar target/JSpaceAlertMissionGenerator-1.2.0-jar-with-dependencies.jar \
 	--unconfirmed-threat-level 0 \
 	--threat-level 10 \
