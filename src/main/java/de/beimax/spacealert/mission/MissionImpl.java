@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.beimax.spacealert.util.Options;
+import de.beimax.spacealert.mission.ThreatGroup;
 
 /**
  * Default Mission Generator
@@ -131,7 +132,7 @@ public class MissionImpl implements Mission {
 	/**
 	 * keeps threats
 	 */
-	private Threat[] threats;
+	private ThreatGroup[] threats;
 	
 	/**
 	 * keeps incoming and data transfers
@@ -165,12 +166,9 @@ public class MissionImpl implements Mission {
 	public MissionImpl() {
 		// get Options
 		Options options = Options.getOptions();
-		
-		long seed;
-		if (options.seed == null) seed = System.nanoTime() + 8682522807148012L;
-		else seed = (long) options.seed;
-		// random number generator
-		generator = new Random(seed);
+
+		if (options.seed == null) generator = new Random(); 
+	        else generator = new Random((long)options.seed);
 		
 		// copy variables from options
 		threatLevel = options.threatLevel;
@@ -206,8 +204,8 @@ public class MissionImpl implements Mission {
 		threatsWithInPercent = options.threatsWithInPercent;
 		
 		// print out seed?
-		if (options.printSeed)
-			System.out.println("Random number generator seed: " +  seed);
+//		if (options.printSeed)
+//			System.out.println("Random number generator seed: " +  seed);
 	}
 	
 	/**
@@ -284,10 +282,15 @@ public class MissionImpl implements Mission {
 		int normalThreats =  threatLevel - seriousThreats * 2;
 		
 		logger.fine("Normal Threats: " + normalThreats + "; Serious Threats: " + seriousThreats);
-		
+
 		// if there are 8 normal threats - check again, if we really want this
-		if (normalThreats == 8 && generator.nextInt(3) != 0) {
-			logger.info("8 normal threats unlikely. Redoing.");
+		if (normalThreats >= 8 && generator.nextInt(3) != 0) {
+			logger.info("8 or more normal threats unlikely. Redoing.");
+			return false;
+		}
+
+		if ((seriousThreats == (threatLevel / 2) || seriousThreats >= 5) && generator.nextInt(3) != 0) {
+			logger.info("all (or 5 or more) serious threats unlikely. Redoing.");
 			return false;
 		}
 
@@ -344,12 +347,23 @@ public class MissionImpl implements Mission {
 		
 		// free memory
 		ArrayList<Integer> phases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
-		for (int i = 0; i < threatsFirstPhase; i++) phases.add(phaseOne.get(i));
-		for (int i = 0; i < threatsSecondPhase; i++) phases.add(phaseTwo.get(i));
+		ArrayList<Integer> internalphases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
+		for (int i = 0; i < threatsFirstPhase; i++) {
+			phases.add(phaseOne.get(i));
+			internalphases.add(phaseOne.get(i));
+		}
+		for (int i = 0; i < threatsSecondPhase; i++) {
+			phases.add(phaseTwo.get(i));
+			internalphases.add(phaseTwo.get(i));
+		}
 		phaseOne = null; phaseTwo = null;
 
+
 		// create threats by level
-		threats = new Threat[8];
+		threats = new ThreatGroup[8];
+		for (int i = 0; i < 8; i++) {
+			threats[i] = new ThreatGroup();
+		}
 		// counter for maximum internal threats
 		int internalThreatsNumber = 0;
 		//statistics counter to make internal threats likely, too
@@ -401,6 +415,10 @@ public class MissionImpl implements Mission {
 			do {
 				int idx = generator.nextInt(phases.size());
 				int phase = phases.get(idx).intValue();
+				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					idx = generator.nextInt(internalphases.size());
+					phase = internalphases.get(idx).intValue();
+				}
 				if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
 					if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
 						if (phase < minTSeriousExternalThreat || phase > maxTSeriousExternalThreat) continue;
@@ -416,7 +434,20 @@ public class MissionImpl implements Mission {
 				}
 				found = true;
 				newThreat.setTime(phase);
-				phases.remove(idx);
+				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					int dropPhase = internalphases.get(idx).intValue() + 1;
+					internalphases.remove(idx);
+					if (generator.nextInt(3) != 0) {
+						for (int z = 0; z < internalphases.size(); z++) {
+							if (internalphases.get(z).intValue() == dropPhase) {
+								internalphases.remove(z);
+								break;
+							}
+						}
+					}
+				} else {
+					phases.remove(idx);					
+				}
 			} while(!found && maxCounter-- > 0);
 			if (!found) {
 				logger.info("Could not create mission due to phase restrictions. Redoing.");
@@ -424,7 +455,11 @@ public class MissionImpl implements Mission {
 			}
 
 			//System.out.println(newThreat);
-			threats[newThreat.getTime()-1] = newThreat;
+			if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+				threats[newThreat.getTime() - 1].addInternal(newThreat);
+			} else {				
+				threats[newThreat.getTime() - 1].addExternal(newThreat);
+			}
 		} // for (int i = 0; i < threatsSum; i++) {
 		
 		// TODO: check if there are two internal threats in a row - if there are, redo mission
@@ -432,22 +467,31 @@ public class MissionImpl implements Mission {
 		// now sort mission entries and generate attack sectors
 		int lastSector = -1;
 		for (int i = 0; i < 8; i++) {
-			if (threats[i] != null && threats[i].getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
+			Threat x = threats[i].getExternal();
+			if (x != null) {
 				switch(generator.nextInt(3)) {
-				case 0: if (lastSector != Threat.THREAT_SECTOR_BLUE) threats[i].setSector(Threat.THREAT_SECTOR_BLUE);
-						else threats[i].setSector(Threat.THREAT_SECTOR_WHITE); break;
-				case 1: if (lastSector != Threat.THREAT_SECTOR_WHITE) threats[i].setSector(Threat.THREAT_SECTOR_WHITE);
-						else threats[i].setSector(Threat.THREAT_SECTOR_RED); break;
-				case 2: if (lastSector != Threat.THREAT_SECTOR_RED) threats[i].setSector(Threat.THREAT_SECTOR_RED);
-						else threats[i].setSector(Threat.THREAT_SECTOR_BLUE); break;
+				case 0: if (lastSector != Threat.THREAT_SECTOR_BLUE) x.setSector(Threat.THREAT_SECTOR_BLUE);
+						else x.setSector(Threat.THREAT_SECTOR_WHITE); break;
+				case 1: if (lastSector != Threat.THREAT_SECTOR_WHITE) x.setSector(Threat.THREAT_SECTOR_WHITE);
+						else x.setSector(Threat.THREAT_SECTOR_RED); break;
+				case 2: if (lastSector != Threat.THREAT_SECTOR_RED) x.setSector(Threat.THREAT_SECTOR_RED);
+						else x.setSector(Threat.THREAT_SECTOR_BLUE); break;
 				default: System.out.println("No Way!");
 				}
-				lastSector = threats[i].getSector();
+				threats[i].addExternal(x);
+				lastSector = x.getSector();
+		
 			}
+
 
 			//if (threats[i] != null) System.out.println(threats[i]);
 		}
 		
+//		for (int i = 0; i < 8; i++) {
+//			System.out.println(i);
+//			System.out.println(threats[i].getInternal());
+//			System.out.println(threats[i].getExternal());
+//		}
 		return true;
 	}
 	
@@ -558,20 +602,19 @@ public class MissionImpl implements Mission {
 		
 		boolean ambushOccured = false;
 		// add threats in first phase
-		int last = 3; // last index to check
 		// ambush handling - is there a phase 4, and it is a normal external threat? ... and chance is taken?
-		if (threats[3] != null && threats[3].getThreatLevel() == Threat.THREAT_LEVEL_NORMAL &&
-				threats[3].getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL && generator.nextInt(100) + 1 < chanceForAmbush[0]) {
+		Threat maybeAmbush = threats[3].getExternal();
+		if (maybeAmbush != null && maybeAmbush.getThreatLevel() == Threat.THREAT_LEVEL_NORMAL && generator.nextInt(100) + 1 < chanceForAmbush[0]) {
 			//...then add an "ambush" threat between 1 minute and 20 secs warnings
 			boolean done = false; // try until it fits
 			do {
 				// TODO: remove hardcoded length here:
 				int ambushTime = generator.nextInt(35) + phaseTimes[0] - 59;
 				logger.info("Ambush in phase 1 at time: " + ambushTime);
-				done = eventList.addEvent(ambushTime, threats[3]);
+				done = eventList.addEvent(ambushTime, maybeAmbush);
 			} while (!done);
 			
-			last = 2; // ignore last threat
+			threats[3].removeExternal();
 			ambushOccured = true; // to disallow two ambushes in one game
 		}
 
@@ -584,11 +627,21 @@ public class MissionImpl implements Mission {
 		int lastTime = (int) (phaseTimes[0] * (((float)threatsWithInPercent) / 100));
 		boolean first = true;
 		// look for first threat
-		for (int i = 0; i <= last; i++) {
-			if (threats[i] == null) continue;
+		for (int i = 0; i <= 3; i++) {
+			ThreatGroup now = threats[i];
+			Threat activeThreat;
+			if (now.hasExternal()) {
+				activeThreat = now.removeExternal();
+				i--;
+			} else if (now.hasInternal()) {
+				activeThreat = now.removeInternal();
+				i--;
+			} else {
+				continue;
+			}
 			// first event?
 			if (first) {
-				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list (time " + currentTime + ") - arg!");
+				if (!eventList.addEvent(currentTime, activeThreat)) logger.warning("Could not add first event to list (time " + currentTime + ") - arg!");
 				first = false;
 			} else {
 				boolean done = false; // try until it fits
@@ -600,33 +653,33 @@ public class MissionImpl implements Mission {
 					int divisor = 2;
 					if (++tries > 10) divisor = 3;
 					else if (tries > 20) divisor = 4;
+					if (lastTime <= currentTime) return false;
 					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
 					if (tries > 30) return false;
-					done = eventList.addEvent(currentTime + nextTime, threats[i]);
+					done = eventList.addEvent(currentTime + nextTime, activeThreat);
 				} while (!done);
 				currentTime += nextTime;
 				// save lastThreatTime for data transfers further down
 				if (i < 3) lastThreatTime[0] = currentTime;
 			}
 			// add to time
-			currentTime += threats[i].getLengthInSeconds();
+			currentTime += activeThreat.getLengthInSeconds();
 		}
 
 		// add threats in second phase
-		last = 7; // last index to check
 		// ambush handling - is there a phase 8, and it is a normal external threat? ... and chance is taken?
-		if (!ambushOccured && threats[7] != null && threats[7].getThreatLevel() == Threat.THREAT_LEVEL_NORMAL &&
-				threats[7].getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL && generator.nextInt(100) + 1 < chanceForAmbush[1]) {
+		maybeAmbush = threats[7].getExternal();
+		if (!ambushOccured && maybeAmbush != null && maybeAmbush.getThreatLevel() == Threat.THREAT_LEVEL_NORMAL && generator.nextInt(100) + 1 < chanceForAmbush[1]) {
 			//...then add an "ambush" threat between 1 minute and 20 secs warnings
 			boolean done = false; // try until it fits
 			do {
 				// TODO: remove hardcoded length here:
 				int ambushTime = generator.nextInt(35) + phaseTimes[0] + phaseTimes[1] - 59;
 				logger.info("Ambush in phase 2 at time: " + ambushTime);
-				done = eventList.addEvent(ambushTime, threats[7]);
+				done = eventList.addEvent(ambushTime, maybeAmbush);
 			} while (!done);
 			
-			last = 6; // ignore last threat
+			threats[7].removeExternal();
 		}
 
 		// add the rest of the threats
@@ -635,11 +688,21 @@ public class MissionImpl implements Mission {
 		lastTime = phaseTimes[0] + (int) (phaseTimes[1] * (((float)threatsWithInPercent) / 100));
 		first = true;
 		// look for first threat
-		for (int i = 4; i <= last; i++) {
-			if (threats[i] == null) continue;
+		for (int i = 4; i <= 7; i++) {
+			ThreatGroup now = threats[i];
+			Threat activeThreat;
+			if (now.hasExternal()) {
+				activeThreat = now.removeExternal();
+				i--;
+			} else if (now.hasInternal()) {
+				activeThreat = now.removeInternal();
+				i--;
+			} else {
+				continue;
+			}
 			// first event?
 			if (first) {
-				if (!eventList.addEvent(currentTime, threats[i])) logger.warning("Could not add first event to list in second phase (time " + currentTime + ") - arg!");
+				if (!eventList.addEvent(currentTime, activeThreat)) logger.warning("Could not add first event to list in second phase (time " + currentTime + ") - arg!");
 				first = false;
 			} else {
 				boolean done = false; // try until it fits
@@ -650,16 +713,17 @@ public class MissionImpl implements Mission {
 					int divisor = 2;
 					if (++tries > 10) divisor = 3;
 					else if (tries > 20) divisor = 4;
+					if (lastTime <= currentTime) return false;
 					nextTime = generator.nextInt((lastTime - currentTime) / divisor) + 5;
 					if (tries > 30) return false;
-					done = eventList.addEvent(currentTime + nextTime, threats[i]);
+					done = eventList.addEvent(currentTime + nextTime, activeThreat);
 				} while (!done);
 				currentTime += nextTime;
 				// save lastThreatTime for data transfers further down
 				if (i < 7) lastThreatTime[1] = currentTime;
 			}
 			// add to time
-			currentTime += threats[i].getLengthInSeconds();
+			currentTime += activeThreat.getLengthInSeconds();
 		}
 
 		//add data transfers
@@ -692,7 +756,7 @@ public class MissionImpl implements Mission {
 			startTime = endTime;
 			endTime += phaseTimes[i];
 			// data transfer first, since these are fairly long
-			for (int j = 0; j < dataTransfers[j]; j++) {
+			for (int j = 0; j < dataTransfers[i]; j++) {
 				boolean done = false; // try until it fits
 				do {
 					// white noise can pretty much occur everywhere

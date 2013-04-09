@@ -18,6 +18,10 @@
  **/
 package de.beimax.spacealert;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+
 import de.beimax.spacealert.exec.CommandLine;
 import de.beimax.spacealert.exec.Gui;
 import de.beimax.spacealert.util.MavenProperties;
@@ -67,7 +71,32 @@ public class MissionGenerator {
 			if (!optionsOk) System.out.println("Incorrect options.");
 			return;
 		}
-		
+		if (options.debug) {
+			  //get the top Logger:
+		    Logger topLogger = java.util.logging.Logger.getLogger("");
+
+		    // Handler for console (reuse it if it already exists)
+		    Handler consoleHandler = null;
+		    //see if there is already a console handler
+		    for (Handler handler : topLogger.getHandlers()) {
+		        if (handler instanceof ConsoleHandler) {
+		            //found the console handler
+		            consoleHandler = handler;
+		            break;
+		        }
+		    }
+
+
+		    if (consoleHandler == null) {
+		        //there was no console handler found, create a new one
+		        consoleHandler = new ConsoleHandler();
+		        topLogger.addHandler(consoleHandler);
+		    }
+		    //set the console handler to fine:
+		    consoleHandler.setLevel(java.util.logging.Level.FINEST);
+
+
+		}
 		// command line execution
 		new CommandLine().start();
 	}
