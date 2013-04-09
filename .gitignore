@@ -1,0 +1,9 @@
+bin/
+.classpath
+.gitignore
+.project
+.settings/
+target/
+clips/
+*.iml
+.idea
