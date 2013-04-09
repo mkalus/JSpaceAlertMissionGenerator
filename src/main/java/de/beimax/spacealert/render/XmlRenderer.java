@@ -87,9 +87,10 @@ public class XmlRenderer implements Renderer {
 				// output info
 				sb.append("\t<Phase duration=\"" + mission.getMissionPhaseLength(phase) + "000\">\n");
 				// phase anouncements for secons and third phases
-				if (++phase >= 2) {
+				if (phase >= 2) {
 					sb.append("\t\t<Element start=\"0\" type=\"Announcement\" message=\"Announce").append(phase==2?"Second":"Third").append("PhaseBegins\" />\n");
 				}
+				phase++;
 			}
 			sb.append("\t\t<Element start=\"").append((long)(time - lastPhaseLength) * 1000).append("\" ").append(entry.getValue().getXMLAttributes(time)).append(" />\n");
 		}
