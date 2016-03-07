@@ -64,7 +64,7 @@ public class MissionGenerator {
 		// - parsing error
 		// - help was requested
 		// - no output/print/play option was given
-		if (!optionsOk || options.help || (!options.play && options.output.size() == 0 && options.print.size() == 0)) {
+		if (!optionsOk || options.help || (!options.play && options.output.isEmpty() && options.print.isEmpty())) {
 			Options.printHelp();
 			printRenderers();
 			printExamples();

@@ -299,9 +299,9 @@ public class Threat implements Event {
 		} else sb.append('T');
 		if (threatPosition != THREAT_POSITION_INTERNAL) {
 			switch (sector) {
-			case THREAT_SECTOR_BLUE: sb.append("B"); break;
-			case THREAT_SECTOR_WHITE: sb.append("W"); break;
-			case THREAT_SECTOR_RED: sb.append("R"); break;
+			case THREAT_SECTOR_BLUE: sb.append('B'); break;
+			case THREAT_SECTOR_WHITE: sb.append('W'); break;
+			case THREAT_SECTOR_RED: sb.append('R'); break;
 			}
 		}		
 		return sb.toString();
