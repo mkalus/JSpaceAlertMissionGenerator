@@ -1,8 +1,8 @@
 package de.beimax.spacealert.mission;
 
 public class ThreatGroup {
-	private Threat internal = null;
-	private Threat external = null;
+	private Threat internal;
+	private Threat external;
 	
 	public ThreatGroup() {
 	}
