@@ -333,7 +333,7 @@ public class MissionImpl implements Mission {
 		
 		// phases
 		ArrayList<Integer> phaseOne = new ArrayList<Integer>(4);
-		for (int i = 1; i <= 4; i++) phaseOne.add(new Integer(i));
+		for (int i = 1; i <= 4; i++) phaseOne.add(Integer.valueOf(i));
 		ArrayList<Integer> phaseTwo = new ArrayList<Integer>(4);
 		for (int i = 5; i <= 8; i++) phaseTwo.add(new Integer(i));
 		

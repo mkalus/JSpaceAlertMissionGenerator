@@ -188,7 +188,7 @@ public class Gui extends JFrame implements ActionListener {
 	 * check for the existence of the clip directory
 	 * @return true if directory exists
 	 */
-	private boolean checkForClipDirectory(String folder) {
+	private static boolean checkForClipDirectory(String folder) {
 		File file = new File(folder);
 		if (!file.exists() || !file.isDirectory()) return false;
 		return true;

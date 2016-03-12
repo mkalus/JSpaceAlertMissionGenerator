@@ -100,7 +100,7 @@ public class MP3Cache {
 	 * @param in
 	 * @return
 	 */
-	private ByteBuffer resizeBuffer(ByteBuffer in) {
+	private static ByteBuffer resizeBuffer(ByteBuffer in) {
 		ByteBuffer result = in;
 		if (in.remaining() < READ_BLOCK) {
 			// create new buffer

@@ -86,7 +86,7 @@ public class EventList {
 		if (!checkTime(time, event.getLengthInSeconds())) return false;
 		
 		// otherwise add event
-		events.put(new Integer(time), event);
+		events.put(Integer.valueOf(time), event);
 		return true;
 	}
 	
