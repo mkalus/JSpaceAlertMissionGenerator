@@ -58,6 +58,7 @@ public class Announcement implements Event {
 		case ANNOUNCEMENT_PH3_ONEMINUTE: return 5;
 		case ANNOUNCEMENT_PH3_TWENTYSECS: return 5;
 		case ANNOUNCEMENT_PH3_ENDS: return 12;
+		default: break;
 		}
 		return -1; //error
 	}
@@ -77,6 +78,7 @@ public class Announcement implements Event {
 		case ANNOUNCEMENT_PH3_ONEMINUTE: return "Operation ends in one minute.";
 		case ANNOUNCEMENT_PH3_TWENTYSECS: return "Operation ends in twenty seconds.";
 		case ANNOUNCEMENT_PH3_ENDS: return "Operation ends in 5, 4, 3, 2, 1. Mission complete.";
+		default: break;
 		}
 		return "ERROR"; //error
 	}
@@ -103,6 +105,7 @@ public class Announcement implements Event {
 		case ANNOUNCEMENT_PH3_ONEMINUTE: return "operation_ends_in_1_minute.mp3";
 		case ANNOUNCEMENT_PH3_TWENTYSECS: return "operation_ends_in_20_seconds.mp3";
 		case ANNOUNCEMENT_PH3_ENDS: return "operation_ends.mp3";
+		default: break;
 		}
 		return null;
 	}
@@ -124,6 +127,7 @@ public class Announcement implements Event {
 		case ANNOUNCEMENT_PH3_ONEMINUTE: sb.append("AnnounceThirdPhaseEndsInOneMinute"); break;
 		case ANNOUNCEMENT_PH3_TWENTYSECS: sb.append("AnnounceThirdPhaseEndsInTwentySeconds"); break;
 		case ANNOUNCEMENT_PH3_ENDS: sb.append("AnnounceThirdPhaseEnds"); break;
+		default: break;
 		}
 		sb.append('"');
 		return sb.toString();
@@ -138,6 +142,7 @@ public class Announcement implements Event {
 		case ANNOUNCEMENT_PH1_ENDS: return "1";
 		case ANNOUNCEMENT_PH2_ENDS: return "2";
 		case ANNOUNCEMENT_PH3_ENDS: return "3";
+		default: break;
 		}
 		return null;
 	}
