@@ -203,7 +203,7 @@ Planed additions and wishlist:
 
 Compiling Java Space Alert Mission Generator:
 
-You can compile the generator youself if you do not want to download the JAR above, you can compile the source yourself:
+You can compile the generator yourself if you do not want to download the JAR above, you can compile the source yourself:
 
 Download using git:
 git clone git://github.com/mkalus/JSpaceAlertMissionGenerator.git
