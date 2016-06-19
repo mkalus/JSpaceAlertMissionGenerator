@@ -159,7 +159,7 @@ public class CommandLine extends Thread {
 	 * check for the existence of the clip directory
 	 * @return
 	 */
-	private boolean checkForClipDirectory(String folder) {
+	private static boolean checkForClipDirectory(String folder) {
 		File file = new File(folder);
 		if (!file.exists() || !file.isDirectory()) return false;
 		return true;
