@@ -48,27 +48,27 @@ public class Threat implements Event {
 	/**
 	 * Threat level
 	 */
-	private int threatLevel = 0;
+	private int threatLevel;
 	
 	/**
 	 * internal/external threat
 	 */
-	private int threatPosition = 0;
+	private int threatPosition;
 	
 	/**
 	 * sector of threat
 	 */
-	private int sector = 0;
+	private int sector;
 	
 	/**
 	 * time in which threat appears
 	 */
-	private int time = 0;
+	private int time;
 	
 	/**
 	 * confirmed threat?
 	 */
-	private boolean confirmed = false;
+	private boolean confirmed;
 
 	/**
 	 * @return the threatLevel

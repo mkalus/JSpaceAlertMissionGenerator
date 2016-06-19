@@ -31,7 +31,7 @@ public class Options {
 	/**
 	 * singleton reference
 	 */
-	private static Options optionsSingleton = null;
+	private static Options optionsSingleton;
 	
 	/**
 	 * singleton getter
@@ -77,25 +77,25 @@ public class Options {
 	 * print help and exit
 	 */
 	@Parameter(names = { "--help", "-h" }, description = "Print help and exit")
-	public boolean help = false;
+	public boolean help;
 
 	/**
 	 * silent mode - do not print banner and the like
 	 */
 	@Parameter(names = { "--silent", "-s" }, description = "Silent mode")
-	public boolean silent = false;
+	public boolean silent;
 	
 	/**
 	 * turn on debug mode (set to fine)
 	 */
 	@Parameter(names = { "--debug", "-D" }, description = "Debug mode")
-	public boolean debug = false;
+	public boolean debug;
 	
 	/**
 	 * start GUI?
 	 */
 	@Parameter(names = {"--list-renderers", "--renderers", "-L" }, description = "List available renderers and exit")
-	public boolean listRenderers = false;
+	public boolean listRenderers;
 
 	/**
 	 * list of output commands
@@ -119,7 +119,7 @@ public class Options {
 	 * do we want to play MP3?
 	 */
 	@Parameter(names = { "--play", "-x" }, description = "Play MP3 after printing and outputting")
-	public boolean play = false;
+	public boolean play;
 
 	/**
 	 * do we want to play MP3?
@@ -137,19 +137,19 @@ public class Options {
 	 * seed for random number generator
 	 */
 	@Parameter(names = { "--seed", "-S" }, description = "Set a random number generator seed")
-	public Long seed = null;
+	public Long seed;
 	
 	/**
 	 * print the seed of the number generator
 	 */
 	@Parameter(names = "--print-seed", description = "Print the seed number at the beginning of the mission")
-	public boolean printSeed = false;
+	public boolean printSeed;
 	
 	/**
 	 * start GUI?
 	 */
 	@Parameter(names = { "--gui", "-g" }, description = "Start GUI")
-	public boolean gui = false;
+	public boolean gui;
 	
 	/**
 	 * threat level
@@ -217,7 +217,7 @@ public class Options {
 	@Parameter(names = { "--max-data-operations-2" }, description = "Maximum data operations in phase 2")
 	public int maxDataOperations2 = 3;
 	@Parameter(names = { "--min-data-operations-3" }, description = "Minimum data operations in phase 3")
-	public int minDataOperations3 = 0;
+	public int minDataOperations3;
 	@Parameter(names = { "--max-data-operations-3" }, description = "Maximum data operations in phase 3")
 	public int maxDataOperations3 = 1;
 	
@@ -229,11 +229,11 @@ public class Options {
 	@Parameter(names = { "--max-incoming-data-1" }, description = "Maximum incoming data in phase 1")
 	public int maxIncomingData1 = 3;
 	@Parameter(names = { "--min-incoming-data-2" }, description = "Minimum incoming data in phase 2")
-	public int minIncomingData2 = 0;
+	public int minIncomingData2;
 	@Parameter(names = { "--max-incoming-data-2" }, description = "Maximum incoming data in phase 2")
 	public int maxIncomingData2 = 2;
 	@Parameter(names = { "--min-incoming-data-3" }, description = "Minimum incoming data in phase 3")
-	public int minIncomingData3 = 0;
+	public int minIncomingData3;
 	@Parameter(names = { "--max-incoming-data-3" }, description = "Maximum incoming data in phase 3")
 	public int maxIncomingData3 = 2;
 	@Parameter(names = { "--min-incoming-data" }, description = "Minimum incoming data in all phases")
@@ -243,7 +243,7 @@ public class Options {
 	 * minimum and maximum data transfers by phases
 	 */
 	@Parameter(names = { "--min-data-transfers-1" }, description = "Minimum data transfers (data operation and incoming data) in phase 1")
-	public int minDataTransfer1 = 0;
+	public int minDataTransfer1;
 	@Parameter(names = { "--max-data-transfers-1" }, description = "Maximum data transfers (data operation and incoming data) in phase 1")
 	public int maxDataTransfer1 = 1;
 	@Parameter(names = { "--min-data-transfers-2" }, description = "Minimum data transfers (data operation and incoming data) in phase 2")
