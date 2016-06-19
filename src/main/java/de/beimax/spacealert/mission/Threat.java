@@ -239,6 +239,7 @@ public class Threat implements Event {
 			case THREAT_SECTOR_BLUE: sb.append("blue"); break;
 			case THREAT_SECTOR_WHITE: sb.append("white"); break;
 			case THREAT_SECTOR_RED: sb.append("red"); break;
+			default: break;
 			}
 		}		
 		sb.append(".mp3");
@@ -270,6 +271,7 @@ public class Threat implements Event {
 			case THREAT_SECTOR_BLUE: sb.append("Blue"); break;
 			case THREAT_SECTOR_WHITE: sb.append("White"); break;
 			case THREAT_SECTOR_RED: sb.append("Red"); break;
+			default: break;
 			}
 			sb.append('"');
 		}
@@ -302,6 +304,7 @@ public class Threat implements Event {
 			case THREAT_SECTOR_BLUE: sb.append('B'); break;
 			case THREAT_SECTOR_WHITE: sb.append('W'); break;
 			case THREAT_SECTOR_RED: sb.append('R'); break;
+			default: break;
 			}
 		}		
 		return sb.toString();
