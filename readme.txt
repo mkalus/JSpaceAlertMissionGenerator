@@ -183,7 +183,7 @@ It will also play the mission if you provide MP3 files in a directory called "cl
 
 In order to play the MP3 clips, you need to download a set of MP3 files and save them in "clips".
 Look at http://sites.google.com/site/boardgametools/SpaceAlertMissionGenerator.
-German and English Sound sets are included in the the Space Alert Mission Generator.
+German and English Sound sets are included in the Space Alert Mission Generator.
 You can also look into the forums on http://www.boardgamegeek.com/ which provide some language files for Japanese and so on.
 
 Have fun!
