@@ -57,12 +57,12 @@ public class MP3MissionPlayer implements Runnable {
 	/**
 	 * player interruption?
 	 */
-	private boolean stop = false;
+	private boolean stop;
 	
 	/**
 	 * player has finished?
 	 */
-	private boolean finished = false;
+	private boolean finished;
 
 	/**
 	 * Constructor
