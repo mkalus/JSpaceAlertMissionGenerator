@@ -182,9 +182,22 @@ It will also play the mission if you provide MP3 files in a directory called "cl
 
 
 In order to play the MP3 clips, you need to download a set of MP3 files and save them in "clips".
-Look at http://sites.google.com/site/boardgametools/SpaceAlertMissionGenerator.
-German and English Sound sets are included in the Space Alert Mission Generator.
-You can also look into the forums on http://www.boardgamegeek.com/ which provide some language files for Japanese and so on.
+Look at https://github.com/nibuen/SpaceAlertMissionGenerator/tree/master/app/src/main/res/raw for the English files.
+
+Other languages:
+* Czech: https://boardgamegeek.com/filepage/41495/space-alert-mp3-random-mission-generator-czech-voi
+* French: https://boardgamegeek.com/filepage/146086/voice-text-french-pack-space-alert-mission-generat
+* German: https://github.com/mkalus/AndroidSpaceAlertApplicationDE/tree/master/res/raw
+* Greek: https://boardgamegeek.com/filepage/70048/greek-male-voice-pack
+* Japanese: https://boardgamegeek.com/filepage/52302/japanese-voice-files-spacealertmissiongenerator
+* Japanese "Yukkuri" pack: https://boardgamegeek.com/filepage/56305/japanese-yukkuri-voice-pack
+* Russian: https://boardgamegeek.com/filepage/120033/russian-voice-pack
+* Spanish: https://boardgamegeek.com/filepage/41392/voces-en-espanol-para-el-generador-de-misiones-en
+
+Special voice files:
+* Female 1: https://boardgamegeek.com/filepage/46941/female-voice-file-pack-random-mission-generator
+* Female 2: https://boardgamegeek.com/filepage/54664/female-voice-pack-random-mission-generator
+* GLaDOS: https://boardgamegeek.com/filepage/114996/glados-soundpack-android-mission-generator
 
 Have fun!
 
