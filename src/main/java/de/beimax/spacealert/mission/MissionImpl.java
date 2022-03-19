@@ -37,6 +37,11 @@ public class MissionImpl implements Mission {
 		if (Options.getOptions().debug) logger.setLevel(Level.FINEST);
 		else logger.setLevel(Level.WARNING);
 	}
+
+	/**
+	 * allow double threats (internal and external at the same time slot - as introduced in "The New Frontier")
+	 */
+	private boolean enableDoubleThreats = false;
 	
 	/**
 	 * configuration: threat level (8 for std game)
@@ -176,6 +181,7 @@ public class MissionImpl implements Mission {
 		minInternalThreats = options.minInternalThreats;
 		maxInternalThreats = options.maxInternalThreats;
 		maxInternalThreatsNumber = options.maxInternalThreatsNumber;
+		enableDoubleThreats = options.enableDoubleThreats;
 		minTNormalExternalThreat = options.minTNormalExternalThreat;
 		maxTNormalExternalThreat = options.maxTNormalExternalThreat;
 		minTSeriousExternalThreat = options.minTSeriousExternalThreat;
@@ -202,10 +208,6 @@ public class MissionImpl implements Mission {
 		maxTimeForFirst = new int[]{ options.maxTimeForFirst1, options.maxTimeForFirst2 };
 		chanceForAmbush = new int[] { options.chanceForAmbush1, options.chanceForAmbush2 };
 		threatsWithInPercent = options.threatsWithInPercent;
-		
-		// print out seed?
-//		if (options.printSeed)
-//			System.out.println("Random number generator seed: " +  seed);
 	}
 	
 	/**
@@ -304,7 +306,14 @@ public class MissionImpl implements Mission {
 			seriousThreats++;
 			threatsSum = normalThreats + seriousThreats;
 		}
-		
+
+		// special case: if we have enableDoubleThreats and only have serious threats -> convert one of them to 2 normal threats
+		if (enableDoubleThreats && normalThreats == 0) {
+			seriousThreats -= 1;
+			normalThreats += 2;
+			threatsSum = normalThreats + seriousThreats;
+		}
+
 		// distribute unconfirmed
 		int seriousUnconfirmed = generator.nextInt(threatUnconfirmed / 2 + 1);
 		int normalUnconfirmed = threatUnconfirmed - seriousUnconfirmed * 2;
@@ -318,6 +327,165 @@ public class MissionImpl implements Mission {
 		}
 		logger.fine("Normal unconfirmed Threats: " + normalUnconfirmed + "; Serious unconfirmed Threats: " + seriousUnconfirmed);
 
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// actually create threats now
+		threats = new ThreatGroup[enableDoubleThreats ? threatsSum - 1 : threatsSum];
+		int threatIdx = 0; // current id in above array
+
+		// if we have a double threat, create this first
+		if (enableDoubleThreats) {
+			Threat newThreat = new Threat(); // new threat created
+			// confirmed or unconfirmed?
+			if (generator.nextInt(threatsSum) + 1 > threatUnconfirmed) {
+				if (generator.nextInt(normalUnconfirmed + seriousUnconfirmed) + 1 <= normalUnconfirmed) {
+					newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
+					normalThreats--;
+					normalUnconfirmed--;
+				} else {
+					newThreat.setThreatLevel(Threat.THREAT_LEVEL_SERIOUS);
+					seriousThreats--;
+					seriousUnconfirmed--;
+				}
+			} else { // normal threats aka confirmed
+				newThreat.setConfirmed(true);
+
+				// serious or not?
+				if (generator.nextInt(normalThreats + seriousThreats - normalUnconfirmed - seriousUnconfirmed) + 1 <= normalThreats - normalUnconfirmed) {
+					newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
+					normalThreats--;
+				} else {
+					newThreat.setThreatLevel(Threat.THREAT_LEVEL_SERIOUS);
+					seriousThreats--;
+				}
+			}
+
+			// internal or external?
+			if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS && internalThreats > 1) { // number must be greater to work
+				// internal/external?
+				if (generator.nextInt(externalThreats + internalThreats) + 1 <= externalThreats) {
+					newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
+					externalThreats -= 2;
+				} else {
+					newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+					internalThreats -= 2;
+				}
+			} else {
+				// create external
+				newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
+				externalThreats--;
+			}
+
+			// create second threat
+			Threat newThreat2 = new Threat(); // new threat created
+			newThreat2.setConfirmed(true); // second threat is always confirmed
+
+			ThreatGroup g = new ThreatGroup();
+			if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+				g.setInternal(newThreat);
+				newThreat2.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
+				g.setExternal(newThreat2);
+			} else {
+				g.setExternal(newThreat);
+				newThreat2.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+				g.setInternal(newThreat2);
+			}
+
+			// now check second threat level
+			if (newThreat.getThreatLevel() != Threat.THREAT_LEVEL_SERIOUS && seriousThreats > 0) {
+				// not serious and serious threats left -> second might be serious
+				if (generator.nextInt(normalThreats + seriousThreats - normalUnconfirmed - seriousUnconfirmed) + 1 <= normalThreats - normalUnconfirmed) {
+					newThreat2.setThreatLevel((Threat.THREAT_LEVEL_NORMAL));
+				} else {
+					newThreat2.setThreatLevel((Threat.THREAT_LEVEL_SERIOUS));
+				}
+			} else {
+				// second is always normal
+				newThreat2.setThreatLevel((Threat.THREAT_LEVEL_NORMAL));
+			}
+
+			// adjust levels
+			if (newThreat2.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
+				seriousThreats--;
+				if (newThreat2.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					internalThreats -= 2;
+				} else {
+					externalThreats -= 2;
+				}
+			} else {
+				normalThreats--;
+				if (newThreat2.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+					internalThreats--;
+				} else {
+					externalThreats--;
+				}
+			}
+
+			threats[threatIdx++] = g;
+		}
+
+		// create serious threats
+		for (int i = 0; i < seriousThreats; i++) {
+			Threat newThreat = new Threat(); // new threat created
+			// unconfirmed or confirmed?
+			if (i >= seriousUnconfirmed) newThreat.setConfirmed(true);
+			newThreat.setThreatLevel(Threat.THREAT_LEVEL_SERIOUS);
+			ThreatGroup g = new ThreatGroup();
+
+			if (internalThreats > 1) { // number must be greater to work
+				// internal/external?
+				if (generator.nextInt(externalThreats + internalThreats) + 1 <= externalThreats) {
+					newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
+					externalThreats -= 2;
+					g.setExternal(newThreat);
+				} else {
+					newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+					internalThreats -= 2;
+					g.setInternal(newThreat);
+				}
+			} else {
+				newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
+				externalThreats -= 2;
+				g.setExternal(newThreat);
+			}
+
+			threats[threatIdx++] = g;
+		}
+
+		// create normal threats
+		for (int i = 0; i < normalThreats; i++) {
+			Threat newThreat = new Threat(); // new threat created
+			// unconfirmed or confirmed?
+			if (i >= normalUnconfirmed) newThreat.setConfirmed(true);
+			newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
+			ThreatGroup g = new ThreatGroup();
+
+			// internal/external?
+			if (generator.nextInt(externalThreats + internalThreats) + 1 <= externalThreats) {
+				newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
+				externalThreats -= 1;
+				g.setExternal(newThreat);
+			} else {
+				newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
+				internalThreats -= 1;
+				g.setInternal(newThreat);
+			}
+
+			threats[threatIdx++] = g;
+		}
+
+		for (int i = 0; i < threats.length; i++) {
+			if (threats[i] != null) {
+				if (threats[i].getExternal() != null)
+					System.out.println(i + ": " + threats[i].getExternal().toString());
+				if (threats[i].getInternal() != null)
+					System.out.println(i + ": " + threats[i].getInternal().toString());
+			}
+		}
+
+		System.exit(0);
+		// TODO: now distribute these threats sanely
+
+		// now distribute
 		// sane threat distribution onto phase 1 and 2
 		int threatsFirstPhase = threatsSum / 2 + generator.nextInt(3)-1;
 		int threatsSecondPhase = threatsSum - threatsFirstPhase;
@@ -347,17 +515,20 @@ public class MissionImpl implements Mission {
 		
 		// free memory
 		ArrayList<Integer> phases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
-		ArrayList<Integer> internalphases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
 		for (int i = 0; i < threatsFirstPhase; i++) {
 			phases.add(phaseOne.get(i));
-			internalphases.add(phaseOne.get(i));
 		}
 		for (int i = 0; i < threatsSecondPhase; i++) {
 			phases.add(phaseTwo.get(i));
-			internalphases.add(phaseTwo.get(i));
 		}
-		phaseOne = null; phaseTwo = null;
 
+		// if we have a double threat, we will remove a random phase and double another one
+		if (enableDoubleThreats) {
+			phases.remove(generator.nextInt(phases.size()));
+			phases.add(phases.get(generator.nextInt(phases.size())));
+		}
+
+		// TODO: rewrite this section completely
 
 		// create threats by level
 		threats = new ThreatGroup[8];
@@ -415,10 +586,6 @@ public class MissionImpl implements Mission {
 			do {
 				int idx = generator.nextInt(phases.size());
 				int phase = phases.get(idx).intValue();
-				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
-					idx = generator.nextInt(internalphases.size());
-					phase = internalphases.get(idx).intValue();
-				}
 				if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
 					if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
 						if (phase < minTSeriousExternalThreat || phase > maxTSeriousExternalThreat) continue;
@@ -434,27 +601,14 @@ public class MissionImpl implements Mission {
 				}
 				found = true;
 				newThreat.setTime(phase);
-				if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
-					int dropPhase = internalphases.get(idx).intValue() + 1;
-					internalphases.remove(idx);
-					if (generator.nextInt(3) != 0) {
-						for (int z = 0; z < internalphases.size(); z++) {
-							if (internalphases.get(z).intValue() == dropPhase) {
-								internalphases.remove(z);
-								break;
-							}
-						}
-					}
-				} else {
-					phases.remove(idx);					
-				}
+				phases.remove(idx);
 			} while(!found && maxCounter-- > 0);
 			if (!found) {
 				logger.info("Could not create mission due to phase restrictions. Redoing.");
 				return false;
 			}
 
-			//System.out.println(newThreat);
+			System.out.println(newThreat);
 			if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
 				threats[newThreat.getTime() - 1].addInternal(newThreat);
 			} else {				
@@ -486,12 +640,13 @@ public class MissionImpl implements Mission {
 
 			//if (threats[i] != null) System.out.println(threats[i]);
 		}
-		
-//		for (int i = 0; i < 8; i++) {
-//			System.out.println(i);
-//			System.out.println(threats[i].getInternal());
-//			System.out.println(threats[i].getExternal());
-//		}
+
+		for (int i = 0; i < 8; i++) {
+			//System.out.println(i);
+			if (threats[i].getInternal() != null) System.out.println(threats[i].getInternal());
+			if (threats[i].getExternal() != null) System.out.println(threats[i].getExternal());
+		}
+		System.exit(0);
 		return true;
 	}
 	
