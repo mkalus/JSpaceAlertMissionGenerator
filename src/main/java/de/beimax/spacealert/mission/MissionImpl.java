@@ -18,8 +18,7 @@
  **/
 package de.beimax.spacealert.mission;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -266,9 +265,9 @@ public class MissionImpl implements Mission {
 	}
 
 	/**
-	 * Inner class to facilitate threat generation
+	 * Inner class to facilitate basic threat generation
 	 */
-	class ThreatGenerator {
+	class BasicThreatGenerator {
 		// counters for threats by level, class, type, etc.
 		int internalThreats, externalThreats,
 				seriousThreats, normalThreats,
@@ -519,182 +518,130 @@ public class MissionImpl implements Mission {
 	 * @return true if generation was successful
 	 */
 	protected boolean generateThreats() {
-		ThreatGenerator tg = new ThreatGenerator();
+		BasicThreatGenerator tg = new BasicThreatGenerator();
 
 		// initialize numbers - might fail, then we return false to try again
 		if (!tg.initialize()) {
+			logger.info("Threat initialization failed. Retrying.");
 			return false;
 		}
 
-		// generate the threats
+		// generate the basic threats
 		threats = tg.generateThreats();
 
-		System.exit(0);
+		// keeps number of threats each phase - used to check sanity further down
+		int threatsFirstPhase = 0;
+		int threatsSecondPhase = 0;
 
-//		// TODO: now distribute these threats sanely
-//
-//		// now distribute
-//		// sane threat distribution onto phase 1 and 2
-//		int threatsFirstPhase = threatsSum / 2 + generator.nextInt(3)-1;
-//		int threatsSecondPhase = threatsSum - threatsFirstPhase;
-//		if (threatsSecondPhase > threatsFirstPhase && threatsSecondPhase - threatsFirstPhase > 1) {
-//			threatsSecondPhase--;
-//			threatsFirstPhase++;
-//		} else if (threatsSecondPhase < threatsFirstPhase && threatsFirstPhase - threatsSecondPhase > 1) {
-//			threatsSecondPhase++;
-//			threatsFirstPhase--;
-//		}
-//
-//		logger.fine("Threats 1st phase: " + threatsFirstPhase + "; Threats 2nd phase: " + threatsSecondPhase);
-//
-//		// phases
-//		ArrayList<Integer> phaseOne = new ArrayList<Integer>(4);
-//		for (int i = 1; i <= 4; i++) phaseOne.add(Integer.valueOf(i));
-//		ArrayList<Integer> phaseTwo = new ArrayList<Integer>(4);
-//		for (int i = 5; i <= 8; i++) phaseTwo.add(new Integer(i));
-//
-//		// remove random entries from the phases
-//		for (int i = 0; i < 4-threatsFirstPhase; i++) {
-//			phaseOne.remove(generator.nextInt(phaseOne.size()));
-//		}
-//		for (int i = 0; i < 4-threatsSecondPhase; i++) {
-//			phaseTwo.remove(generator.nextInt(phaseTwo.size()));
-//		}
-//
-//		// free memory
-//		ArrayList<Integer> phases = new ArrayList<Integer>(threatsFirstPhase + threatsSecondPhase);
-//		for (int i = 0; i < threatsFirstPhase; i++) {
-//			phases.add(phaseOne.get(i));
-//		}
-//		for (int i = 0; i < threatsSecondPhase; i++) {
-//			phases.add(phaseTwo.get(i));
-//		}
-//
-//		// if we have a double threat, we will remove a random phase and double another one
-//		if (enableDoubleThreats) {
-//			phases.remove(generator.nextInt(phases.size()));
-//			phases.add(phases.get(generator.nextInt(phases.size())));
-//		}
-//
-//		// TODO: rewrite this section completely
-//
-//		// create threats by level
-//		threats = new ThreatGroup[8];
-//		for (int i = 0; i < 8; i++) {
-//			threats[i] = new ThreatGroup();
-//		}
-//		// counter for maximum internal threats
-//		int internalThreatsNumber = 0;
-//		//statistics counter to make internal threats likely, too
-//		int externalThreatLevelLeft = externalThreats;
-//		for (int i = 0; i < threatsSum; i++) {
-//			Threat newThreat = new Threat(); // new threat created
-//			if (i < seriousThreats) {
-//				newThreat.setThreatLevel(Threat.THREAT_LEVEL_SERIOUS);
-//				// unconfirmed reports
-//				if (seriousUnconfirmed > 0) {
-//					seriousUnconfirmed--;
-//					newThreat.setConfirmed(false);
-//				} else newThreat.setConfirmed(true);
-//			}
-//			else {
-//				newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
-//				// unconfirmed reports
-//				if (normalUnconfirmed > 0) {
-//					normalUnconfirmed--;
-//					newThreat.setConfirmed(false);
-//				} else newThreat.setConfirmed(true);
-//			}
-//			// internal/external?
-//			if (generator.nextInt(threatsSum - i) + 1 <= externalThreatLevelLeft) {
-//				if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-//					if (externalThreatLevelLeft == 1) { // not enough external threat level left => make internal
-//						newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
-//						internalThreatsNumber++;
-//					} else { // serious threat level deduction
-//						externalThreatLevelLeft -= 2;
-//						newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
-//					}
-//				} else { // normal threat level deduction
-//					externalThreatLevelLeft--;
-//					newThreat.setThreatPosition(Threat.THREAT_POSITION_EXTERNAL);
-//				}
-//			} else {
-//				newThreat.setThreatPosition(Threat.THREAT_POSITION_INTERNAL);
-//				internalThreatsNumber++;
-//			}
-//			if (internalThreatsNumber > maxInternalThreatsNumber) {
-//				logger.info("Too many internal threats. Redoing.");
-//				return false;
-//			}
-//
-//			// define phase
-//			int maxCounter = 3; // try three times before giving up
-//			boolean found = false;
-//			do {
-//				int idx = generator.nextInt(phases.size());
-//				int phase = phases.get(idx).intValue();
-//				if (newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-//					if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
-//						if (phase < minTSeriousExternalThreat || phase > maxTSeriousExternalThreat) continue;
-//					} else {
-//						if (phase < minTSeriousInternalThreat || phase > maxTSeriousInternalThreat) continue;
-//					}
-//				} else {
-//					if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_EXTERNAL) {
-//						if (phase < minTNormalExternalThreat|| phase > maxTNormalExternalThreat) continue;
-//					} else {
-//						if (phase < minTNormalInternalThreat || phase > maxTNormalInternalThreat) continue;
-//					}
-//				}
-//				found = true;
-//				newThreat.setTime(phase);
-//				phases.remove(idx);
-//			} while(!found && maxCounter-- > 0);
-//			if (!found) {
-//				logger.info("Could not create mission due to phase restrictions. Redoing.");
-//				return false;
-//			}
-//
-//			System.out.println(newThreat);
-//			if (newThreat.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
-//				threats[newThreat.getTime() - 1].addInternal(newThreat);
-//			} else {
-//				threats[newThreat.getTime() - 1].addExternal(newThreat);
-//			}
-//		} // for (int i = 0; i < threatsSum; i++) {
-//
-//		// TODO: check if there are two internal threats in a row - if there are, redo mission
-//
-//		// now sort mission entries and generate attack sectors
-//		int lastSector = -1;
-//		for (int i = 0; i < 8; i++) {
-//			Threat x = threats[i].getExternal();
-//			if (x != null) {
-//				switch(generator.nextInt(3)) {
-//				case 0: if (lastSector != Threat.THREAT_SECTOR_BLUE) x.setSector(Threat.THREAT_SECTOR_BLUE);
-//						else x.setSector(Threat.THREAT_SECTOR_WHITE); break;
-//				case 1: if (lastSector != Threat.THREAT_SECTOR_WHITE) x.setSector(Threat.THREAT_SECTOR_WHITE);
-//						else x.setSector(Threat.THREAT_SECTOR_RED); break;
-//				case 2: if (lastSector != Threat.THREAT_SECTOR_RED) x.setSector(Threat.THREAT_SECTOR_RED);
-//						else x.setSector(Threat.THREAT_SECTOR_BLUE); break;
-//				default: System.out.println("No Way!");
-//				}
-//				threats[i].addExternal(x);
-//				lastSector = x.getSector();
-//
-//			}
-//
-//
-//			//if (threats[i] != null) System.out.println(threats[i]);
-//		}
-//
-//		for (int i = 0; i < 8; i++) {
-//			//System.out.println(i);
-//			if (threats[i].getInternal() != null) System.out.println(threats[i].getInternal());
-//			if (threats[i].getExternal() != null) System.out.println(threats[i].getExternal());
-//		}
-//		System.exit(0);
+		// generate phases and distribute threats
+		ThreatGroup[] sortedThreats = new ThreatGroup[8];
+
+		for (ThreatGroup threatGroup : threats) {
+			if (threatGroup != null) {
+				// for each threat group, set min and max phases
+				int minPhase = 1;
+				int maxPhase = 8;
+
+				Threat externalThreat = threatGroup.getExternal();
+				if (externalThreat != null) {
+					if (externalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
+						if (minPhase < minTSeriousExternalThreat) minPhase = minTSeriousExternalThreat;
+						if (maxPhase > maxTSeriousExternalThreat) maxPhase = maxTSeriousExternalThreat;
+					} else {
+						if (minPhase < minTNormalExternalThreat) minPhase = minTNormalExternalThreat;
+						if (maxPhase > maxTNormalExternalThreat) maxPhase = maxTNormalExternalThreat;
+					}
+				}
+
+				Threat internalThreat = threatGroup.getInternal();
+				if (internalThreat != null) {
+					if (internalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
+						if (minPhase < minTSeriousInternalThreat) minPhase = minTSeriousInternalThreat;
+						if (maxPhase > maxTSeriousInternalThreat) maxPhase = maxTSeriousInternalThreat;
+					} else {
+						if (minPhase < minTNormalInternalThreat) minPhase = minTNormalInternalThreat;
+						if (maxPhase > maxTNormalInternalThreat) maxPhase = maxTNormalInternalThreat;
+					}
+				}
+
+				// create list of possible phases - find remaining possible phases and pick one
+				LinkedList<Integer> possiblePhases = new LinkedList<Integer>();
+				for (int i = minPhase; i <= maxPhase; i++) {
+					if (sortedThreats[i-1] == null) possiblePhases.add(i);
+				}
+
+				// no possible phases left - giving up to continue again
+				if (possiblePhases.size() == 0) {
+					logger.info("Threat distribution failed - no possible phases left to put created threat into. Retrying.");
+					return false;
+				}
+
+				// pick random phase
+				int phase = possiblePhases.get(generator.nextInt(possiblePhases.size()));
+
+				// set stuff
+				if (externalThreat != null) externalThreat.setTime(phase);
+				if (internalThreat != null) internalThreat.setTime(phase);
+				sortedThreats[phase-1] = threatGroup;
+
+				// add threat score
+				if (externalThreat != null && internalThreat != null) {
+					if (phase <= 4) threatsFirstPhase += 2;
+					else threatsSecondPhase += 2;
+				} else {
+					if (phase <= 4) threatsFirstPhase++;
+					else threatsSecondPhase++;
+				}
+			}
+		}
+
+		// check sanity of distributions of threats among phase 1 and 2
+		if (Math.abs(threatsFirstPhase - threatsSecondPhase) > 1) {
+			logger.info("Threat distribution failed - not balanced enough. Retrying.");
+			return false; // the distribution should be equal
+		}
+
+		// set sorted threats
+		threats = sortedThreats;
+
+		// generate attack sectors
+		int lastSector = -1; // to not generate same sectors twice
+		boolean lastThreatWasInternal = false; // sanity check if there are two internal threats in a row - if there are, retry mission
+		for (int i = 0; i < 8; i++) {
+			if (threats[i] != null) {
+				Threat t = threats[i].getExternal();
+				if (t != null) {
+					switch (generator.nextInt(3)) {
+						case 0:
+							if (lastSector != Threat.THREAT_SECTOR_BLUE) t.setSector(Threat.THREAT_SECTOR_BLUE);
+							else t.setSector(Threat.THREAT_SECTOR_WHITE);
+							break;
+						case 1:
+							if (lastSector != Threat.THREAT_SECTOR_WHITE) t.setSector(Threat.THREAT_SECTOR_WHITE);
+							else t.setSector(Threat.THREAT_SECTOR_RED);
+							break;
+						case 2:
+							if (lastSector != Threat.THREAT_SECTOR_RED) t.setSector(Threat.THREAT_SECTOR_RED);
+							else t.setSector(Threat.THREAT_SECTOR_BLUE);
+							break;
+						// default: System.out.println("No Way!");
+					}
+					lastSector = t.getSector();
+				}
+				t = threats[i].getInternal();
+				if (t != null) {
+					if (lastThreatWasInternal) {
+						logger.info("Two internal threats in a row. Retrying.");
+						return false;
+					}
+					lastThreatWasInternal = true;
+				}
+			} else {
+				// add empty group to not have NPEs later on - this is not so elegant and might be subject to refactoring at some time...
+				threats[i] = new ThreatGroup();
+			}
+		}
+
 		return true;
 	}
 	
@@ -835,10 +782,10 @@ public class MissionImpl implements Mission {
 			Threat activeThreat;
 			if (now.hasExternal()) {
 				activeThreat = now.removeExternal();
-				i--;
+				i--; //check again
 			} else if (now.hasInternal()) {
 				activeThreat = now.removeInternal();
-				i--;
+				i--; //check again
 			} else {
 				continue;
 			}
@@ -896,10 +843,10 @@ public class MissionImpl implements Mission {
 			Threat activeThreat;
 			if (now.hasExternal()) {
 				activeThreat = now.removeExternal();
-				i--;
+				i--; //check again
 			} else if (now.hasInternal()) {
 				activeThreat = now.removeInternal();
-				i--;
+				i--; //check again
 			} else {
 				continue;
 			}
