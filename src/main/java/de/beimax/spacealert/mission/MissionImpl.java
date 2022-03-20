@@ -402,9 +402,6 @@ public class MissionImpl implements Mission {
 		 * @return generated threats
 		 */
 		ThreatGroup[] generateThreats() {
-			// TODO: this generation is quite longish and duplicates a lot of code - it would be nicer to make it
-			// more concise and reduce duplicate code fragments by using inner class methods to keep track of numbers
-
 			ThreatGroup[] threats = new ThreatGroup[enableDoubleThreats ? threatsSum - 1 : threatsSum];
 			int threatIdx = 0; // current id in above array
 
@@ -413,14 +410,14 @@ public class MissionImpl implements Mission {
 				Threat newThreat = new Threat(); // new threat created
 				// confirmed or unconfirmed?
 				if (generator.nextInt(threatsSum) + 1 > threatUnconfirmed) {
-					if (generator.nextInt(normalUnconfirmed + seriousUnconfirmed) + 1 <= normalUnconfirmed) { // TODO: sums
+					if (generator.nextInt(normalUnconfirmed + seriousUnconfirmed) + 1 <= normalUnconfirmed) {
 						normalUnconfirmedThreatAdded(newThreat);
 					} else {
 						seriousUnconfirmedThreatAdded(newThreat);
 					}
 				} else { // normal threats aka confirmed
 					// serious or not?
-					if (generator.nextInt(normalThreats + seriousThreats - normalUnconfirmed - seriousUnconfirmed) + 1 <= normalThreats - normalUnconfirmed) { // TODO: sums
+					if (generator.nextInt(normalThreats + seriousThreats - normalUnconfirmed - seriousUnconfirmed) + 1 <= normalThreats - normalUnconfirmed) {
 						normalThreatAdded(newThreat);
 					} else {
 						seriousThreatAdded(newThreat);
@@ -429,7 +426,6 @@ public class MissionImpl implements Mission {
 
 				// internal or external?
 				if (internalThreats > 1 && newThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) { // number must be greater to work
-					// TODO: more concise if here
 					// internal/external?
 					if (generator.nextInt(externalThreats + internalThreats) + 1 <= externalThreats) {
 						externalThreatAdded(newThreat);
@@ -484,16 +480,12 @@ public class MissionImpl implements Mission {
 			for (int i = 0; i < seriousThreats; i++) {
 				Threat newThreat = new Threat(); // new threat created
 				// unconfirmed or confirmed?
-				if (i >= seriousUnconfirmed) newThreat.setConfirmed(true);
+				newThreat.setConfirmed(i >= seriousUnconfirmed);
 				newThreat.setThreatLevel(Threat.THREAT_LEVEL_SERIOUS);
 
-				if (internalThreats > 1) { // number must be greater to work
-					// internal/external?
-					if (generator.nextInt(externalThreats + internalThreats) + 1 <= externalThreats) {
-						externalThreatAdded(newThreat);
-					} else {
-						internalThreatAdded(newThreat);
-					}
+				// internal or external threat?
+				if (internalThreats > 1 && generator.nextInt(externalThreats + internalThreats) + 1 > externalThreats) {
+					internalThreatAdded(newThreat);
 				} else {
 					externalThreatAdded(newThreat);
 				}
@@ -505,26 +497,17 @@ public class MissionImpl implements Mission {
 			for (int i = 0; i < normalThreats; i++) {
 				Threat newThreat = new Threat(); // new threat created
 				// unconfirmed or confirmed?
-				if (i >= normalUnconfirmed) newThreat.setConfirmed(true);
+				newThreat.setConfirmed(i >= normalUnconfirmed);
 				newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
 
 				// internal/external?
-				if (generator.nextInt(externalThreats + internalThreats) + 1 <= externalThreats) {
-					externalThreatAdded(newThreat);
-				} else {
+				if (generator.nextInt(externalThreats + internalThreats) + 1 > externalThreats) {
 					internalThreatAdded(newThreat);
+				} else {
+					externalThreatAdded(newThreat);
 				}
 
 				threats[threatIdx++] = new ThreatGroup(newThreat);
-			}
-
-			for (int i = 0; i < threats.length; i++) {
-				if (threats[i] != null) {
-					if (threats[i].getExternal() != null)
-						System.out.println(i + ": " + threats[i].getExternal().toString());
-					if (threats[i].getInternal() != null)
-						System.out.println(i + ": " + threats[i].getInternal().toString());
-				}
 			}
 
 			return threats;
