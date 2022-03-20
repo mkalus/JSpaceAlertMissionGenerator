@@ -128,7 +128,7 @@ public class Options {
 	public String backgroundAlarm = "normal";
 
 	/**
-	 * print the seed of the number generator
+	 * folder in which MP3 clips are stored
 	 */
 	@Parameter(names = { "--clips-folder", "-c" }, description = "Folder in which MP3 clips are stored")
 	public String clipsFolder = "clips";
@@ -138,19 +138,17 @@ public class Options {
 	 */
 	@Parameter(names = { "--seed", "-S" }, description = "Set a random number generator seed")
 	public Long seed;
-	
-	/**
-	 * print the seed of the number generator
-	 */
-	@Parameter(names = "--print-seed", description = "Print the seed number at the beginning of the mission")
-	public boolean printSeed;
-	
+
 	/**
 	 * start GUI?
 	 */
 	@Parameter(names = { "--gui", "-g" }, description = "Start GUI")
 	public boolean gui;
-	
+
+	/**
+	 *
+	 */
+
 	/**
 	 * threat level
 	 */
@@ -172,7 +170,13 @@ public class Options {
 	public int maxInternalThreats = 3;
 	@Parameter(names = { "--max-internal-threats" }, description = "Maximum number of internal threats")
 	public int maxInternalThreatsNumber = 2; // number of internal threats max
-	
+
+	/**
+	 * enable double threats - see "The New Frontier"
+	 */
+	@Parameter(names = { "--allow-double-threats"}, description = "Enable double threats (\"The New Frontier\": one external and internal threat will occur on one time slot)")
+	public boolean enableDoubleThreats = false;
+
 	/**
 	 * minimum and maximum time in which normal threats can occur
 	 */

@@ -7,6 +7,10 @@ public class ThreatGroup {
 	public ThreatGroup() {
 	}
 
+	public ThreatGroup(Threat e) {
+		set(e);
+	}
+
 	public Threat getInternal() {
 		return internal;
 	}
@@ -39,14 +43,20 @@ public class ThreatGroup {
 		return false;
 	}
 
-	public boolean setExternal(Threat e) {
+	public void setExternal(Threat e) {
 		external = e;
-		return true;
 	}
 	
-	public boolean setInternal(Threat e) {
+	public void setInternal(Threat e) {
 		internal = e;
-		return true;
+	}
+
+	public void set(Threat e) {
+		if (e.getThreatPosition() == Threat.THREAT_POSITION_INTERNAL) {
+			setInternal(e);
+		} else {
+			setExternal(e);
+		}
 	}
 
 	public Threat removeInternal() {
