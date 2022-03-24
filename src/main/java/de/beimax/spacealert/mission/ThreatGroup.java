@@ -11,6 +11,11 @@ public class ThreatGroup {
 		set(e);
 	}
 
+	public ThreatGroup(Threat internal, Threat external) {
+		this.internal = internal;
+		this.external = external;
+	}
+
 	public Threat getInternal() {
 		return internal;
 	}

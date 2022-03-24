@@ -744,6 +744,13 @@ public class MissionImpl implements Mission {
 	protected boolean generatePhases() {
 		logger.info("Data gathered: Generating phases.");
 
+		// Deep copy as we modify the groups when attempting to fit - thanks to nibuen
+		ThreatGroup[] threats = new ThreatGroup[this.threats.length];
+		for (int i = 0; i < threats.length; i++) {
+			ThreatGroup original = this.threats[i];
+			threats[i] = new ThreatGroup(original.getInternal(), original.getExternal());
+		}
+
 		// create events
 		eventList = new EventList();
 
