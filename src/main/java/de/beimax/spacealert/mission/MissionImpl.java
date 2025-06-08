@@ -635,6 +635,8 @@ public class MissionImpl implements Mission {
 						return false;
 					}
 					lastThreatWasInternal = true;
+				} else {
+					lastThreatWasInternal = false;
 				}
 			} else {
 				// add empty group to not have NPEs later on - this is not so elegant and might be subject to refactoring at some time...
