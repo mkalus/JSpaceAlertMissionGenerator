@@ -201,6 +201,7 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
 
 Available renderers:
  - text
+ - TextPlayer
  - XML
  - MP3
  - FlashPlayerCode
@@ -213,6 +214,9 @@ java -jar JSpaceAlertMissionGenerator.jar -p text --play
 
 java -jar JSpaceAlertMissionGenerator.jar -o XML -p text -p MP3
  - Print mission as text on screen, save it as XML and start playing MP3 ("print" MP3 translates to --play).
+
+java -jar JSpaceAlertMissionGenerator.jar -p TextPlayer
+ - Start text player (print text at moments like the MP3 player)
 
 java -jar JSpaceAlertMissionGenerator.jar -p text -l 10 -u 2 -i 2 -I 4 --allow-double-threats --max-time-serious-external 8 --max-time-normal-internal 8
  - Create "Standard Mission" for "The New Frontier" expansion using double actions.
