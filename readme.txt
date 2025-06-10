@@ -221,7 +221,7 @@ java -jar JSpaceAlertMissionGenerator.jar -p TextPlayer
 java -jar JSpaceAlertMissionGenerator.jar -p text -l 10 -u 2 -i 2 -I 4 --allow-double-threats --max-time-serious-external 8 --max-time-normal-internal 8
  - Create "Standard Mission" for "The New Frontier" expansion using double actions.
 
-Right now, the generator is quite basic: Start it from the command line and it will output a mission profile.
+Right now, the generator is quite basic: Start it from the command line, and it will output a mission profile.
 It will also play the mission if you provide MP3 files in a directory called "clips" in the same directory where you execute the jar.
 
 
