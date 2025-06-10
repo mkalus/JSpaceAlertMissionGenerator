@@ -10,7 +10,7 @@
 # sound:
 # ./advanced.sh -p text --play
 
-java -jar target/JSpaceAlertMissionGenerator-1.3.1-jar-with-dependencies.jar \
+java -jar target/JSpaceAlertMissionGenerator-1.4.0-jar-with-dependencies.jar \
 	--unconfirmed-threat-level 0 \
 	--threat-level 10 \
 	--min-phase-time-1 285 --max-phase-time-1 305 \

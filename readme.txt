@@ -271,7 +271,7 @@ Compile using Maven2-Build System and Java:
 mvn install
 
 The executable will be compiled in:
-target/JSpaceAlertMissionGenerator-1.3.1-jar-with-dependencies.jar
+target/JSpaceAlertMissionGenerator-1.4.0-jar-with-dependencies.jar
 
 
 If you do not use Maven2, you will need following libraries:
