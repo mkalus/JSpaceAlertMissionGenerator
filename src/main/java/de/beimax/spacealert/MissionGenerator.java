@@ -105,7 +105,7 @@ public class MissionGenerator {
 	 * print a list of renderers
 	 */
 	public static void printRenderers() {
-		System.out.println("Available renderers:\n - text\n - TextPlayer\n - XML\n - MP3\n - FlashPlayerCode\n");
+		System.out.println("Available renderers:\n - text\n - XML\n - MP3\n - FlashPlayerCode\n");
 		//TODO: list of renderers should be dynamic in some way
 		// I cannot access JAR content, but maybe I can get maven to add a list of Renderers to manifest or so
 	}
@@ -114,6 +114,6 @@ public class MissionGenerator {
 	 * print some example uses
 	 */
 	public static void printExamples() {
-		System.out.println("Some Examples:\n\njava -jar JSpaceAlertMissionGenerator.jar -p text --play\n - Print mission as English text file and start playing MP3s.\n\njava -jar JSpaceAlertMissionGenerator.jar -o XML -p text -p MP3\n - Print mission as text on screen, save it as XML and\n   start playing MP3 (\"print\" MP3 translates to --play).\n\njava -jar JSpaceAlertMissionGenerator.jar -p TextPlayer\n - Start text player (print text at moments like the MP3 player).\n\njava -jar JSpaceAlertMissionGenerator.jar -p text -l 10 -u 2 -i 2 -I 4 \\\n    --allow-double-threats --max-time-serious-external 8 \\\n    --max-time-normal-internal 8\n - Create \"Standard Mission\" for \"The New Frontier\" expansion using double actions.");
+		System.out.println("Some Examples:\n\njava -jar JSpaceAlertMissionGenerator.jar -p text --play\n - Print mission as English text file and start playing MP3s.\n\njava -jar JSpaceAlertMissionGenerator.jar -o XML -p text -p MP3\n - Print mission as text on screen, save it as XML and\n   start playing MP3 (\"print\" MP3 translates to --play).\n\njava -jar JSpaceAlertMissionGenerator.jar -p text -l 10 -u 2 -i 2 -I 4 \\\n    --allow-double-threats --max-time-serious-external 8 \\\n    --max-time-normal-internal 8\n - Create \"Standard Mission\" for \"The New Frontier\" expansion using double actions.");
 	}
 }
