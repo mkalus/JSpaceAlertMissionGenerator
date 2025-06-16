@@ -314,4 +314,7 @@ public class Options {
 	 */
 	@Parameter(names = { "--threats-within-percent" }, description = "Threats appear within this percentage of a phase")
 	public int threatsWithInPercent = 70;
+
+	@Parameter(names = { "--color-console-text" }, description = "If true, console output text will be colored. Not supported in all consoles.")
+	public Boolean colorConsoleText = false;
 }

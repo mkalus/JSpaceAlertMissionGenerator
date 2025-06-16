@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import de.beimax.spacealert.mission.Mission;
+import de.beimax.spacealert.util.ConsoleColorer;
 import de.beimax.spacealert.util.Options;
 
 /**
@@ -33,7 +34,7 @@ public class TextRenderer implements Renderer {
 	 * @see de.beimax.spacealert.render.Renderer#print()
 	 */
 	public boolean print(Mission mission) {
-		System.out.println(getMissionText(mission));
+		System.out.println(ConsoleColorer.colorLines(getMissionText(mission)));
 		return true;
 	}
 
