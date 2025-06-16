@@ -26,6 +26,7 @@ import de.beimax.spacealert.mission.Event;
 import de.beimax.spacealert.mission.EventList;
 import de.beimax.spacealert.mission.Mission;
 import de.beimax.spacealert.mission.WhiteNoise;
+import de.beimax.spacealert.util.ConsoleColorer;
 import de.beimax.spacealert.util.Options;
 
 /**
@@ -80,6 +81,10 @@ public class MP3MissionPlayer implements Runnable {
 	 */
 	public void run() {
 		logger.info("MP3MissionPlayer started");
+
+		// Add some space to the console output
+		System.out.println("");
+
 		// start time
 		long start = System.currentTimeMillis();
 		int nextEventAt = 0;
@@ -107,7 +112,7 @@ public class MP3MissionPlayer implements Runnable {
 				// in case someone yelled something and you didn't hear it.
 				//
 				// We skip white noise events, as you will hear those continually.
-				System.out.println(EventList.formatTime(eventTime) + " - " + event.getDescription(eventTime));
+				System.out.println(ConsoleColorer.colorLine(EventList.formatTime(eventTime) + " - " + event.getDescription(eventTime)));
 			}
 			
 			player = new MP3Player(event.getMP3s(eventTime), backgroundPlayer);
