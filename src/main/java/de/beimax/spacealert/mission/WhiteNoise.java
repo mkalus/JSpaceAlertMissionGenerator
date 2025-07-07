@@ -66,7 +66,7 @@ public class WhiteNoise implements Event {
 	/**
 	 * get MP3 file names
 	 */
-	public String getMP3s(int time) {
+	public String getMP3s() {
 		StringBuilder sb = new StringBuilder();
 		
 		// calculate time of white noise

@@ -49,7 +49,7 @@ public class DataTransfer implements Event {
 	/**
 	 * get MP3 file names
 	 */
-	public String getMP3s(int time) {
+	public String getMP3s() {
 		return "data_transfer.mp3";
 	}
 	

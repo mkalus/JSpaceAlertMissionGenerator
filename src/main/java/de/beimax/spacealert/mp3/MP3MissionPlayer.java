@@ -136,7 +136,7 @@ public class MP3MissionPlayer implements Runnable {
 				}
 			}
 			
-			player = new MP3Player(event.getMP3s(eventTime), backgroundPlayer);
+			player = new MP3Player(event.getMP3s(), backgroundPlayer);
 			player.start();
 			
 			// get next event

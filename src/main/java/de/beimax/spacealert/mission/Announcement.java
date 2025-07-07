@@ -93,7 +93,7 @@ public class Announcement implements Event {
 	/**
 	 * get MP3 file names
 	 */
-	public String getMP3s(int time) {
+	public String getMP3s() {
 		switch (type) {
 		case ANNOUNCEMENT_PH1_START: return "begin_first_phase.mp3";
 		case ANNOUNCEMENT_PH1_ONEMINUTE: return "first_phase_ends_in_1_minute.mp3";

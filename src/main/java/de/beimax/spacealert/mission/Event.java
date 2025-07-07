@@ -41,10 +41,9 @@ public interface Event {
 	
 	/**
 	 * Get a list of MP3 files to play
-	 * @param time
 	 * @return comma separated list of MP3s
 	 */
-	public String getMP3s(int time);
+	public String getMP3s();
 	
 	/**
 	 * return XML attributes for XML output
