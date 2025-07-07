@@ -408,8 +408,9 @@ public class MissionImpl implements Mission {
 			if (enableDoubleThreats) {
 				Threat newThreat = new Threat(); // new threat created
 				// confirmed or unconfirmed?
-				if (generator.nextInt(threatsSum) + 1 > threatUnconfirmed) {
-					if (generator.nextInt(normalUnconfirmed + seriousUnconfirmed) + 1 <= normalUnconfirmed) {
+				int desiredUnconfirmedThreats = threatUnconfirmed + seriousUnconfirmed;
+				if (desiredUnconfirmedThreats > 0 && generator.nextInt(threatsSum) + 1 > threatUnconfirmed) {
+					if (generator.nextInt(desiredUnconfirmedThreats) + 1 <= normalUnconfirmed) {
 						normalUnconfirmedThreatAdded(newThreat);
 					} else {
 						seriousUnconfirmedThreatAdded(newThreat);

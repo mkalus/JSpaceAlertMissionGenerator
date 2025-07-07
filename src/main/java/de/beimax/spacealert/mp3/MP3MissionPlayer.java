@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 import de.beimax.spacealert.mission.Event;
 import de.beimax.spacealert.mission.EventList;
 import de.beimax.spacealert.mission.Mission;
+import de.beimax.spacealert.mission.WhiteNoise;
+import de.beimax.spacealert.util.ConsoleColorer;
 import de.beimax.spacealert.util.Options;
 
 /**
@@ -79,6 +81,10 @@ public class MP3MissionPlayer implements Runnable {
 	 */
 	public void run() {
 		logger.info("MP3MissionPlayer started");
+
+		// Add some space to the console output
+		System.out.println("");
+
 		// start time
 		long start = System.currentTimeMillis();
 		int nextEventAt = 0;
@@ -88,6 +94,8 @@ public class MP3MissionPlayer implements Runnable {
 		
 		// get next event
 		Map.Entry<Integer, Event> nextEvent = events.getNextEvent(nextEventAt);
+		String lastPrintedString = "";
+		Boolean colorConsoleText = Options.getOptions().colorConsoleText;
 		do {
 			// wait for event time
 			while(System.currentTimeMillis() - start < ((long) nextEventAt) * 1000) {
@@ -101,7 +109,32 @@ public class MP3MissionPlayer implements Runnable {
 			};
 			Event event = nextEvent.getValue();
 			int eventTime = nextEvent.getKey();
-			logger.info("Event " + EventList.formatTime(eventTime) + " - " + event.getDescription(eventTime));
+			if (!(event instanceof WhiteNoise)) {
+				// Print the event to Standard Output so you can 'check' the mission
+				// in case someone yelled something and you didn't hear it.
+				//
+				// We skip white noise events, as you will hear those continually.
+				String lineToPrint = EventList.formatTime(eventTime) + " - " + event.getDescription(eventTime);
+				if (colorConsoleText) {
+					if (lastPrintedString.contains("ends in") && lineToPrint.contains("ends in")) {
+						// If the last line we printed was a 'phase/operation ends in...' line,
+						// then to make the console easier to read, we clear the last printed line
+						// before writing out this new line.
+						// We assume here that if the console supports color ANSI codes, it also supports
+						// the ANSI code to clear the last line.
+						// Note that if the console wraps text, then this will only clear the "last
+						// wrapped line" and not the entire line. The 'one minute' and '20 seconds' lines
+						// are short though so probably won't wrap.
+						System.out.print("\033[A\033[J");
+					}
+					lastPrintedString = lineToPrint;
+					System.out.println(ConsoleColorer.colorLine(lineToPrint));
+				} else {
+					// No color, just print the line.
+					// No need to keep track of the last printed line as it is never checked.
+					System.out.println(lineToPrint);
+				}
+			}
 			
 			player = new MP3Player(event.getMP3s(eventTime), backgroundPlayer);
 			player.start();
