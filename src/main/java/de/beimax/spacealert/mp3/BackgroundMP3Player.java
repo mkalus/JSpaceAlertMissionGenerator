@@ -61,14 +61,14 @@ public abstract class BackgroundMP3Player extends Thread {
 	}
 	
 	/**
-	 * command to sent to thread to stop music
+	 * command to notify thread to stop music
 	 */
 	public void startMusic() {
 		playing = true;
 	}
 	
 	/**
-	 * command to sent to thread to stop music
+	 * command to notify to thread to stop music
 	 */
 	public void stopMusic() {
 		playing = false;
