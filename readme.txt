@@ -1,7 +1,7 @@
 Java Space Alert Mission Generator
 ==================================
 
-Download executable: https://www.dropbox.com/s/5l1gt2zl5dujrvb/JSpaceAlertMissionGenerator.jar?dl=1
+Download executables in https://github.com/mkalus/JSpaceAlertMissionGenerator/releases
 
 
 Start with: java -jar JSpaceAlertMissionGenerator.jar
