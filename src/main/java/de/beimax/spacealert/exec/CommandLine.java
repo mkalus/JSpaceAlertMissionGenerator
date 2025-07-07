@@ -3,7 +3,6 @@
  */
 package de.beimax.spacealert.exec;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -139,7 +138,7 @@ public class CommandLine extends Thread {
 		if (!options.play) return;
 		
 		// check for clips directory
-		if (!checkForClipDirectory(options.clipsFolder)) {
+		if (!options.checkForClipDirectory()) {
 			System.out.println("In order to play the MP3 clips, you need to download a set of MP3 files and save them in a directory named clips (or specified by --clips-folder option) in the same directory as the jar.\nLook at http://sites.google.com/site/boardgametools/SpaceAlertMissionGenerator.\nGerman and English Sound sets are included in the the Space Alert Mission Generator. You can also look into the forums on http://www.boardgamegeek.com/ which provide some language files for Japanese and so on.");
 			return;
 		}
@@ -153,15 +152,5 @@ public class CommandLine extends Thread {
 		// start it in a new thread
 		Thread playerThread = new Thread(player);
 		playerThread.start();
-	}
-
-	/**
-	 * check for the existence of the clip directory
-	 * @return
-	 */
-	private static boolean checkForClipDirectory(String folder) {
-		File file = new File(folder);
-		if (!file.exists() || !file.isDirectory()) return false;
-		return true;
 	}
 }

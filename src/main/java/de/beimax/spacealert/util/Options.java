@@ -18,6 +18,7 @@
  **/
 package de.beimax.spacealert.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -317,4 +318,13 @@ public class Options {
 
 	@Parameter(names = { "--color-console-text" }, description = "If true, console output text will be colored. Not supported in all consoles.")
 	public Boolean colorConsoleText = false;
+
+	/**
+	 * check for the existence of the clip directory
+	 * @return bool
+	 */
+	public boolean checkForClipDirectory() {
+		File file = new File(clipsFolder);
+        return file.exists() && file.isDirectory();
+    }
 }
