@@ -6,14 +6,18 @@
 	<version>1.4.1</version>
 	<name>JSpaceAlertMissionGenerator</name>
 	<description>Mission Generator for Space Alert Board Game</description>
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 	<dependencies>
-		<!-- JLayer is an MP3 player (LGPL-Licence): http://www.javazoom.net/javalayer/javalayer.html -->
+		<!-- This is a more modern version of JLayer from Javazoom, a project that died in 2012 -->
 		<dependency>
-			<groupId>de.huxhorn.sulky</groupId>
-			<artifactId>de.huxhorn.sulky.3rdparty.jlayer</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<groupId>com.github.umjammer</groupId>
+			<artifactId>jlayer</artifactId>
+			<version>1.0.3</version>
 		</dependency>
 		<!-- Options Parser (Apache Licence): http://jcommander.org/ -->
 		<dependency>
