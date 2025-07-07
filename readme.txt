@@ -1,6 +1,8 @@
 Java Space Alert Mission Generator
 ==================================
 
+Requires Java 18+
+
 Download executables in https://github.com/mkalus/JSpaceAlertMissionGenerator/releases
 
 
