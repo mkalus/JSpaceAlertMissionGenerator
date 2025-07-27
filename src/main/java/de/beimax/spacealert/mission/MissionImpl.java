@@ -58,7 +58,13 @@ public class MissionImpl implements Mission {
 	private int minInternalThreats = 1;
 	private int maxInternalThreats = 3;
 	private int maxInternalThreatsNumber = 2; // number of internal threats max
-	
+
+	/**
+	 * limiting the number of normal and serious threats
+	 */
+	public int maxNormalThreatsNumber = threatLevel - 1;
+	public int maxSeriousThreatsNumber = (int) Math.floor((float)(threatLevel - 1)/2);
+
 	/**
 	 * minimum and maximum time in which normal threats can occur
 	 */
@@ -180,6 +186,8 @@ public class MissionImpl implements Mission {
 		minInternalThreats = options.minInternalThreats;
 		maxInternalThreats = options.maxInternalThreats;
 		maxInternalThreatsNumber = options.maxInternalThreatsNumber;
+		maxNormalThreatsNumber = options.maxNormalThreatsNumber;
+		maxSeriousThreatsNumber = options.maxSeriousThreatsNumber;
 		enableDoubleThreats = options.enableDoubleThreats;
 		minTNormalExternalThreat = options.minTNormalExternalThreat;
 		maxTNormalExternalThreat = options.maxTNormalExternalThreat;
@@ -285,24 +293,18 @@ public class MissionImpl implements Mission {
 			logger.fine("Threat Level: " + threatLevel + "; interal = " + internalThreats + ", external = " + externalThreats);
 
 			// generate number of serious threats
-			seriousThreats = generator.nextInt(threatLevel / 2 + 1);
+			// e.g. threatLevel=8, maxNormalThreatsNumber=7. Diff is 1. At least 1 threat level must come from
+			// a serious threat. Each give 2 threat value, so we only need half that number of serious threats.
+			// But we can't have half-serious threats, so round up. 
+			int maxSerious = (int) Math.min(Math.floor((float)threatLevel/2), maxSeriousThreatsNumber);
+			int minSerious = Math.max(0, (int) Math.ceil((float)(threatLevel - maxNormalThreatsNumber)/2));
+			seriousThreats = minSerious + generator.nextInt(maxSerious-minSerious+1);
 			// if we only have serious threats and normal unconfirmed reports: reduce number of threats by 1
 			if (threatUnconfirmed % 2 == 1 && seriousThreats * 2 == threatLevel)
 				seriousThreats--;
 			normalThreats =  threatLevel - seriousThreats * 2;
 
 			logger.fine("Normal Threats: " + normalThreats + "; Serious Threats: " + seriousThreats);
-
-			// if there are 8 normal threats - check again, if we really want this
-			if (normalThreats >= 8 && generator.nextInt(3) != 0) {
-				logger.info("8 or more normal threats unlikely. Redoing.");
-				return false;
-			}
-
-			if ((seriousThreats == (threatLevel / 2) || seriousThreats >= 5) && generator.nextInt(3) != 0) {
-				logger.info("all (or 5 or more) serious threats unlikely. Redoing.");
-				return false;
-			}
 
 			// get sums
 			threatsSum = normalThreats + seriousThreats;
@@ -434,7 +436,6 @@ public class MissionImpl implements Mission {
 					}
 				} else {
 					// create external
-					newThreat.setThreatLevel(Threat.THREAT_LEVEL_NORMAL);
 					externalThreatAdded(newThreat);
 				}
 

@@ -57,7 +57,11 @@ public class Options {
 		} catch (ParameterException e) {
 			return false;
 		}
-		
+
+		if (options.maxNormalThreatsNumber + options.maxSeriousThreatsNumber * 2 < options.threatLevel) {
+			System.out.println("Cannot reach threat level with given max normal/serious threats");
+			return false;
+		}
 		return true;
 	}
 	
@@ -171,6 +175,14 @@ public class Options {
 	public int maxInternalThreats = 3;
 	@Parameter(names = { "--max-internal-threats" }, description = "Maximum number of internal threats")
 	public int maxInternalThreatsNumber = 2; // number of internal threats max
+
+	/**
+	 * limiting the number of normal and serious threats
+	 */
+	@Parameter(names = { "--max-normal-threats" }, description = "Maximum number of normal threats")
+	public int maxNormalThreatsNumber = threatLevel - 1;
+	@Parameter(names = { "--max-serious-threats" }, description = "Maximum number of serious threats")
+	public int maxSeriousThreatsNumber = (int) Math.floor((float)(threatLevel - 1)/2);
 
 	/**
 	 * enable double threats - see "The New Frontier"

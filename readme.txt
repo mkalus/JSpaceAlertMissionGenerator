@@ -74,6 +74,12 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
     --max-internal-threats
       Maximum number of internal threats
       Default: 2
+    --max-normal-threats
+      Maximum number of normal threats.
+      Default: threat level minus 1 (not only normal threats)
+    --max-serious-threats
+      Maximum number of serious threats
+      Default: threat level minus 1, divided by 2, rounded down. (not only serious threats)
     --max-phase-time-1
       Maximum phase time for phase 1
       Default: 240
