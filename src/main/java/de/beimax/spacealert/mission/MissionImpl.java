@@ -531,6 +531,20 @@ public class MissionImpl implements Mission {
 		// generate the basic threats
 		threats = tg.generateThreats();
 
+		// Check that we do not have too many internal threats.
+		{
+			int internalThreatsCounter = 0;
+			for (ThreatGroup threatGroup : threats) {
+				if (threatGroup.hasInternal()) {
+					internalThreatsCounter++;
+				}
+			}
+			if (internalThreatsCounter > maxInternalThreatsNumber) {
+				logger.info("Too many internal threats. Retrying.");
+				return false;
+			}
+		}
+
 		// keeps number of threats each phase - used to check sanity further down
 		int threatsFirstPhase = 0;
 		int threatsSecondPhase = 0;
