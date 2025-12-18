@@ -297,6 +297,8 @@ public class Options {
 	public int minWhiteNoiseTime = 9;
 	@Parameter(names = { "--max-whitenoise-single" }, description = "Maximum time of whitenoise of a single communication break")
 	public int maxWhiteNoiseTime = 20;
+	@Parameter(names = { "--max-whitenoise-count" }, description = "Maximum number of whitenoise instances")
+	public int maxWhiteNoiseCount = 5;
 	
 	/**
 	 * minimum and maximum time for phases

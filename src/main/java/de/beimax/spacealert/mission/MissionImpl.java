@@ -117,6 +117,7 @@ public class MissionImpl implements Mission {
 	private int maxWhiteNoise = 60;
 	private int minWhiteNoiseTime = 9;
 	private int maxWhiteNoiseTime = 20;
+	private int maxWhiteNoiseCount = 5;
 	
 	/**
 	 * minimum and maximum time for phases
@@ -218,6 +219,7 @@ public class MissionImpl implements Mission {
 		maxWhiteNoise = options.maxWhiteNoise;
 		minWhiteNoiseTime = options.minWhiteNoiseTime;
 		maxWhiteNoiseTime = options.maxWhiteNoiseTime;
+		maxWhiteNoiseCount = options.maxWhiteNoiseCount;
 		minPhaseTime = new int[]{ options.minPhaseTime1, options.minPhaseTime2, options.minPhaseTime3 };
 		maxPhaseTime = new int[]{ options.maxPhaseTime1, options.maxPhaseTime2, options.maxPhaseTime3 };
 		minTimeForFirst = new int[]{ options.minTimeForFirst1, options.minTimeForFirst2 };
@@ -831,46 +833,60 @@ public class MissionImpl implements Mission {
 	protected void generateTimes() {
 		// generate white noise
 		int whiteNoiseTime = meanWeightedValueGenerator.nextInt(minWhiteNoise, maxWhiteNoise);
-		logger.fine("White noise time: " + whiteNoiseTime);
 		
 		// create chunks
-		ArrayList<Integer> whiteNoiseChunks = new ArrayList<Integer>();
+		ArrayList<Integer> whiteNoiseChunks = new ArrayList<>();
 		while (whiteNoiseTime > 0) {
-			// create random chunk
-			int chunk = meanWeightedValueGenerator.nextInt(minWhiteNoiseTime, maxWhiteNoiseTime);
-			// check if there is enough time left
+			// logger.fine("whiteNoiseTime="+whiteNoiseTime+", chunks: "+whiteNoiseChunks.toString());
+
+			// What is the maximum we can take such that there is at least 'minWhiteNoiseTime' left
+			// for the next iteration?
+			int maximumWeCanTakeInASplit = whiteNoiseTime - minWhiteNoiseTime;
+			if (maximumWeCanTakeInASplit < minWhiteNoiseTime) {
+				// We cannot split what is left over or we would be left with a too-small piece for
+				// the next iteration. So what is left is our chunk.
+				whiteNoiseChunks.add(whiteNoiseTime);
+				whiteNoiseTime -= whiteNoiseTime;
+				// logger.fine("Remaining noise is too small to split: " + whiteNoiseTime);
+				continue;
+			}
+
+			// What is the smallest amount we can take and still be able to fill the time required
+			// with the remaining possible communication breaks?
+			int maxNumberOfRemainingCommBreaksLeftAfterASplit = maxWhiteNoiseCount - whiteNoiseChunks.size() - 1;
+			int maxTimeThatFitsIntoThoseCommBreaks = maxNumberOfRemainingCommBreaksLeftAfterASplit * maxWhiteNoiseTime;
+			int minimumWeCanTakeInASplit = whiteNoiseTime - maxTimeThatFitsIntoThoseCommBreaks;
+			// I tried using the mean-weighted distribution value generator, but it made too predictable
+			// noise chunks. It was more fun and dynamic with the uniform generator.
+			int chunk = generator.nextInt(maxWhiteNoiseTime-minWhiteNoiseTime) + minWhiteNoiseTime + 1;
 			if (chunk > whiteNoiseTime) {
-				// hard case: smaller than minimum time
-				if (chunk < minWhiteNoiseTime) {
-					// add to last chunk that fits
-					for (int i = whiteNoiseChunks.size()-1; i >= 0; i--) {
-						int sumChunk = whiteNoiseChunks.get(i) + chunk;
-						// if smaller than maximum time: add to this chunk
-						if (sumChunk <= maxWhiteNoiseTime) {
-							whiteNoiseChunks.set(i, sumChunk);
-							whiteNoiseTime = 0;
-							break;
-						}
-					}
-					// still not zeroed
-					if (whiteNoiseTime > 0) { // add to last element, regardless - quite unlikely though
-						int lastIdx = whiteNoiseChunks.size()-1;
-						whiteNoiseChunks.set(lastIdx, whiteNoiseChunks.get(lastIdx) + chunk);
-						whiteNoiseTime = 0;
-					}
-				} else { // easy case: create smaller rest chunk
-					whiteNoiseChunks.add(whiteNoiseTime);
-					whiteNoiseTime = 0;
-				}
-			} else { // add new chunk
+				// logger.fine("Randomized noise chunk "+chunk+" is greater than remaining time. Use remainder: "+whiteNoiseTime);		
+				whiteNoiseChunks.add(whiteNoiseTime);
+				whiteNoiseTime -= whiteNoiseTime;
+			} else {
+				// logger.fine("Chunk: "+chunk+", min: "+minimumWeCanTakeInASplit+", max: "+maximumWeCanTakeInASplit);
+				chunk = Math.max(Math.min(chunk, maximumWeCanTakeInASplit), minimumWeCanTakeInASplit);
 				whiteNoiseChunks.add(chunk);
 				whiteNoiseTime -= chunk;
 			}
 		}
+		// logger.fine("chunks: "+whiteNoiseChunks.toString());
 		
 		// ok, add chunks to mission
 		whiteNoise = new WhiteNoise[whiteNoiseChunks.size()];
 		for (int i = 0; i < whiteNoiseChunks.size(); i++) whiteNoise[i] = new WhiteNoise(whiteNoiseChunks.get(i));
+		logger.log(Level.FINE, () -> {
+			StringBuilder sb = new StringBuilder();
+			int sum = 0;
+			sb.append("White Noise: ");
+			for (int i = 0; i < whiteNoise.length; i++) {
+				sum += whiteNoise[i].getLengthInSeconds();
+				sb.append(whiteNoise[i].getLengthInSeconds()).append("s");
+				if (i < whiteNoise.length - 1) sb.append(", ");
+			}
+			sb.append(" - Sum: ").append(sum).append("s");
+			return sb.toString();
+		});
 		
 		// add mission lengths
 		phaseTimes = new int[3];
