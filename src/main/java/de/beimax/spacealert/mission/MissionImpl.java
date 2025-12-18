@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import de.beimax.spacealert.util.Options;
 import de.beimax.spacealert.mission.ThreatGroup;
+import de.beimax.spacealert.util.MeanWeightedValueGenerator;
 
 /**
  * Default Mission Generator
@@ -171,6 +172,12 @@ public class MissionImpl implements Mission {
 	Random generator;
 	
 	/**
+     * random number generator favoring middle values between a minimum and
+     * maximum values
+     */
+    MeanWeightedValueGenerator meanWeightedValueGenerator;
+
+	/**
 	 * Constructor
 	 */
 	public MissionImpl() {
@@ -180,6 +187,8 @@ public class MissionImpl implements Mission {
 		if (options.seed == null) generator = new Random(); 
 	        else generator = new Random((long)options.seed);
 		
+        meanWeightedValueGenerator = new MeanWeightedValueGenerator(((double) options.gaussianWeight) / 100, ((double) options.standardDeviation) / 100, options.seed);
+
 		// copy variables from options
 		threatLevel = options.threatLevel;
 		threatUnconfirmed = options.threatUnconfirmed;
@@ -287,7 +296,7 @@ public class MissionImpl implements Mission {
 		 * @return false if something goes wrong
 		 */
 		boolean initialize() {
-			internalThreats = generator.nextInt(maxInternalThreats - minInternalThreats + 1) + minInternalThreats;
+            internalThreats = meanWeightedValueGenerator.nextInt(minInternalThreats, maxInternalThreats);
 			externalThreats = threatLevel - internalThreats;
 
 			logger.fine("Threat Level: " + threatLevel + "; interal = " + internalThreats + ", external = " + externalThreats);
@@ -298,7 +307,7 @@ public class MissionImpl implements Mission {
 			// But we can't have half-serious threats, so round up. 
 			int maxSerious = (int) Math.min(Math.floor((float)threatLevel/2), maxSeriousThreatsNumber);
 			int minSerious = Math.max(0, (int) Math.ceil((float)(threatLevel - maxNormalThreatsNumber)/2));
-			seriousThreats = minSerious + generator.nextInt(maxSerious-minSerious+1);
+            seriousThreats = meanWeightedValueGenerator.nextInt(minSerious, maxSerious);
 			// if we only have serious threats and normal unconfirmed reports: reduce number of threats by 1
 			if (threatUnconfirmed % 2 == 1 && seriousThreats * 2 == threatLevel)
 				seriousThreats--;
@@ -677,8 +686,8 @@ public class MissionImpl implements Mission {
 
 		// generate stuff by phase
 		for (int i = 0; i < 3; i++) {
-			incomingData[i] = generator.nextInt(maxIncomingData[i] - minIncomingData[i] + 1) + minIncomingData[i];
-			dataTransfers[i] = generator.nextInt(maxDataTransfer[i] - minDataTransfer[i] + 1) + minDataTransfer[i];
+            incomingData[i] = meanWeightedValueGenerator.nextInt(minIncomingData[i], maxIncomingData[i]);
+            dataTransfers[i] = meanWeightedValueGenerator.nextInt(minDataTransfer[i], maxDataTransfer[i]);
 			
 			// check minimums
 			if (incomingData[i] + dataTransfers[i] < minDataOperations[i] ||
@@ -706,14 +715,14 @@ public class MissionImpl implements Mission {
 	 */
 	protected void generateTimes() {
 		// generate white noise
-		int whiteNoiseTime = generator.nextInt(maxWhiteNoise - minWhiteNoise + 1) + minWhiteNoise;
+		int whiteNoiseTime = meanWeightedValueGenerator.nextInt(minWhiteNoise, maxWhiteNoise);
 		logger.fine("White noise time: " + whiteNoiseTime);
 		
 		// create chunks
 		ArrayList<Integer> whiteNoiseChunks = new ArrayList<Integer>();
 		while (whiteNoiseTime > 0) {
 			// create random chunk
-			int chunk = generator.nextInt(maxWhiteNoiseTime - minWhiteNoiseTime + 1) + minWhiteNoiseTime;
+			int chunk = meanWeightedValueGenerator.nextInt(minWhiteNoiseTime, maxWhiteNoiseTime);
 			// check if there is enough time left
 			if (chunk > whiteNoiseTime) {
 				// hard case: smaller than minimum time
@@ -751,7 +760,7 @@ public class MissionImpl implements Mission {
 		// add mission lengths
 		phaseTimes = new int[3];
 		for (int i = 0; i < 3; i++) {
-			phaseTimes[i] = generator.nextInt(maxPhaseTime[i] - minPhaseTime[i] + 1) + minPhaseTime[i];
+			phaseTimes[i] = meanWeightedValueGenerator.nextInt(minPhaseTime[i], maxPhaseTime[i]);
 		}
 	}
 	
@@ -784,7 +793,7 @@ public class MissionImpl implements Mission {
 			boolean done = false; // try until it fits
 			do {
 				// TODO: remove hardcoded length here:
-				int ambushTime = generator.nextInt(35) + phaseTimes[0] - 59;
+				int ambushTime = meanWeightedValueGenerator.nextInt(0, 34) + phaseTimes[0] - 59;
 				logger.info("Ambush in phase 1 at time: " + ambushTime);
 				done = eventList.addEvent(ambushTime, maybeAmbush);
 			} while (!done);
@@ -797,7 +806,7 @@ public class MissionImpl implements Mission {
 		int[] lastThreatTime = { 0, 0 };
 
 		// add the rest of the threats
-		int currentTime = generator.nextInt(maxTimeForFirst[0] - minTimeForFirst[0] + 1) + minTimeForFirst[0];
+		int currentTime = meanWeightedValueGenerator.nextInt(minTimeForFirst[0], maxTimeForFirst[0]);
 		// threats should appear within this time
 		int lastTime = (int) (phaseTimes[0] * (((float)threatsWithInPercent) / 100));
 		boolean first = true;
@@ -849,7 +858,7 @@ public class MissionImpl implements Mission {
 			boolean done = false; // try until it fits
 			do {
 				// TODO: remove hardcoded length here:
-				int ambushTime = generator.nextInt(35) + phaseTimes[0] + phaseTimes[1] - 59;
+				int ambushTime = meanWeightedValueGenerator.nextInt(0, 34) + phaseTimes[0] + phaseTimes[1] - 59;
 				logger.info("Ambush in phase 2 at time: " + ambushTime);
 				done = eventList.addEvent(ambushTime, maybeAmbush);
 			} while (!done);
@@ -858,7 +867,7 @@ public class MissionImpl implements Mission {
 		}
 
 		// add the rest of the threats
-		currentTime = phaseTimes[0] + generator.nextInt(maxTimeForFirst[1] - minTimeForFirst[1] + 1) + minTimeForFirst[1];
+		currentTime = phaseTimes[0] + meanWeightedValueGenerator.nextInt(minTimeForFirst[1], maxTimeForFirst[1]);
 		// threats should appear within this time
 		lastTime = phaseTimes[0] + (int) (phaseTimes[1] * (((float)threatsWithInPercent) / 100));
 		first = true;

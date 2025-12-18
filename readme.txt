@@ -194,6 +194,12 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
       Default: []
     --seed, -S
       Set a random number generator seed
+    --random-distribution-weight-percent
+      Set probability distribution of random values. 0 = uniform, 100 = normal distribution around mid-point of the min and max values, value between makes a blend of the two.
+      Default: 0 (uniform distribution of values)
+    --random-standard-deviation-percent
+      The standard deviation, in percent, around the midpoint (0.5) between min (0) and max (1) values. Lower values, more chance of mid-way values.
+      Default: 20
     --silent, -s
       Silent mode
       Default: false

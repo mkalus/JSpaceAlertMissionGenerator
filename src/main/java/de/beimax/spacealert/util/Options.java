@@ -145,6 +145,18 @@ public class Options {
 	public Long seed;
 
 	/**
+	 * probability distribution weight between uniform and total normal distribution.
+	 */
+	@Parameter(names = { "--random-distribution-weight-percent"}, description = "Set probability distribution of random values. 0 = uniform, 100 = normal distribution around mid-point of the min and max values, value between makes a blend of the two.")
+	public int gaussianWeight = 0;
+
+	/**
+	 * Set the standard deviation of the normal distribution, if used.
+	 */
+	@Parameter(names = { "--random-standard-deviation-percent" }, description = "The standard deviation, in percent, around the midpoint (0.5) between min (0) and max (1) values. Lower values, more chance of mid-way values.")
+	public int standardDeviation = 20;
+
+	/**
 	 * start GUI?
 	 */
 	@Parameter(names = { "--gui", "-g" }, description = "Start GUI")
