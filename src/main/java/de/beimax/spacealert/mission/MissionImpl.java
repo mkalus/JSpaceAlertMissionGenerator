@@ -320,7 +320,8 @@ public class MissionImpl implements Mission {
 
 			// if threat level is higher than 8, create serious threats until we have a threat level of 8 or lower
 			// thanks to Leif Norcott from BoardGameGeek
-			while (threatsSum > 8) {
+			while (threatsSum > (enableDoubleThreats ? 9 : 8)) {
+				logger.log(Level.FINE, "Converting two normal threats to a serious threat to fit our {0} time slots.", enableDoubleThreats ? 9 : 8);
 				normalThreats -= 2;
 				seriousThreats++;
 				threatsSum = normalThreats + seriousThreats;
