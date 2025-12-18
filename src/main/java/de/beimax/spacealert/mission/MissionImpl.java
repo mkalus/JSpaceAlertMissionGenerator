@@ -555,84 +555,16 @@ public class MissionImpl implements Mission {
 			}
 		}
 
-		// keeps number of threats each phase - used to check sanity further down
-		int threatsFirstPhase = 0;
-		int threatsSecondPhase = 0;
-
-		// generate phases and distribute threats
-		ThreatGroup[] sortedThreats = new ThreatGroup[8];
-
-		for (ThreatGroup threatGroup : threats) {
-			if (threatGroup != null) {
-				// for each threat group, set min and max phases
-				int minPhase = 1;
-				int maxPhase = 8;
-
-				Threat externalThreat = threatGroup.getExternal();
-				if (externalThreat != null) {
-					if (externalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-						if (minPhase < minTSeriousExternalThreat) minPhase = minTSeriousExternalThreat;
-						if (maxPhase > maxTSeriousExternalThreat) maxPhase = maxTSeriousExternalThreat;
-					} else {
-						if (minPhase < minTNormalExternalThreat) minPhase = minTNormalExternalThreat;
-						if (maxPhase > maxTNormalExternalThreat) maxPhase = maxTNormalExternalThreat;
-					}
-				}
-
-				Threat internalThreat = threatGroup.getInternal();
-				if (internalThreat != null) {
-					if (internalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-						if (minPhase < minTSeriousInternalThreat) minPhase = minTSeriousInternalThreat;
-						if (maxPhase > maxTSeriousInternalThreat) maxPhase = maxTSeriousInternalThreat;
-					} else {
-						if (minPhase < minTNormalInternalThreat) minPhase = minTNormalInternalThreat;
-						if (maxPhase > maxTNormalInternalThreat) maxPhase = maxTNormalInternalThreat;
-					}
-				}
-
-				// create list of possible phases - find remaining possible phases and pick one
-				LinkedList<Integer> possiblePhases = new LinkedList<Integer>();
-				for (int i = minPhase; i <= maxPhase; i++) {
-					if (sortedThreats[i-1] == null) possiblePhases.add(i);
-				}
-
-				// no possible phases left - giving up to continue again
-				if (possiblePhases.size() == 0) {
-					logger.info("Threat distribution failed - no possible phases left to put created threat into. Retrying.");
-					return false;
-				}
-
-				// pick random phase
-				int phase = possiblePhases.get(generator.nextInt(possiblePhases.size()));
-
-				// set stuff
-				if (externalThreat != null) externalThreat.setTime(phase);
-				if (internalThreat != null) internalThreat.setTime(phase);
-				sortedThreats[phase-1] = threatGroup;
-
-				// add threat score
-				if (externalThreat != null && internalThreat != null) {
-					if (phase <= 4) threatsFirstPhase += 2;
-					else threatsSecondPhase += 2;
-				} else {
-					if (phase <= 4) threatsFirstPhase++;
-					else threatsSecondPhase++;
-				}
-			}
-		}
-
-		// check sanity of distributions of threats among phase 1 and 2
-		if (Math.abs(threatsFirstPhase - threatsSecondPhase) > 1) {
-			logger.info("Threat distribution failed - not balanced enough. Retrying.");
-			return false; // the distribution should be equal
-		}
-
 		// set sorted threats
-		threats = sortedThreats;
+		threats = assignTimeslotsToThreats(threats, new ThreatGroup[8]);
+
+		if (threats == null) {
+			logger.info("Unable to assign timeslots to theats. Retrying.");
+			return false;
+		}
 
 		// generate attack sectors
 		int lastSector = -1; // to not generate same sectors twice
-		boolean lastThreatWasInternal = false; // sanity check if there are two internal threats in a row - if there are, retry mission
 		int redThreats = 0;
 		int blueThreats = 0;
 		int whiteThreats = 0;
@@ -640,6 +572,7 @@ public class MissionImpl implements Mission {
 			if (threats[i] != null) {
 				Threat t = threats[i].getExternal();
 				if (t != null) {
+					t.setTime(i+1);
 					Set<Integer> possibleSectors = new HashSet<>();
 					if (redThreats < 3) possibleSectors.add(Threat.THREAT_SECTOR_RED);
 					if (blueThreats < 3) possibleSectors.add(Threat.THREAT_SECTOR_BLUE);
@@ -654,13 +587,7 @@ public class MissionImpl implements Mission {
 				}
 				t = threats[i].getInternal();
 				if (t != null) {
-					if (lastThreatWasInternal) {
-						logger.info("Two internal threats in a row. Retrying.");
-						return false;
-					}
-					lastThreatWasInternal = true;
-				} else {
-					lastThreatWasInternal = false;
+					t.setTime(i+1);
 				}
 			} else {
 				// add empty group to not have NPEs later on - this is not so elegant and might be subject to refactoring at some time...
@@ -669,6 +596,195 @@ public class MissionImpl implements Mission {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Recursive helper function to assign timeslots to a list of threats. This method will NOT
+	 * set the internal T of the threats, i.e. it will not call .setTime on the threats.
+	 * Doing so would make it impossible for the method to call itself recursively.
+	 *
+	 * @param untimedThreats These are threats that we have so far not sorted into their respective timeslots
+	 * @param timedThreats These are the threats that we have so far sorted. This is a sparse array of length 8.
+	 * @return a new timedThreats array of length 8 with all the threats asorted, or null if this is impossible to do.
+	 */
+	private ThreatGroup[] assignTimeslotsToThreats(ThreatGroup[] untimedThreats, ThreatGroup[] timedThreats) {
+		logger.log(Level.FINE, () -> {
+			StringBuilder sb = new StringBuilder();
+			sb.append("| ");
+			for (int i = 0; i < timedThreats.length; i++) {
+				if (timedThreats[i] == null) sb.append("  ");
+				else {
+					if (timedThreats[i].hasExternal()) sb.append((timedThreats[i].getExternal().getThreatLevel() == 1 ? 'e' : 'E'));
+					else sb.append(" ");
+					if (timedThreats[i].hasInternal()) sb.append((timedThreats[i].getInternal().getThreatLevel() == 1 ? 'i' : 'I'));
+					else sb.append(" ");
+				}
+				if (i == 3) sb.append(" |   | ");
+				else if (i != 7) sb.append(" , ");
+			}
+			sb.append("|");
+			return sb.toString();
+		});
+		// Base case.
+		if (untimedThreats.length == 0) {
+			// We need to check if the threat distribtion across phases is balanced.
+			{
+				int threatCountPhase1 = 0;
+				int threatCountPhase2 = 0;
+				int threatLevelPhase1 = 0;
+				int threatLevelPhase2 = 0;
+				
+
+				for (int i = 0; i < timedThreats.length; i++) {
+					if (timedThreats[i] != null) {
+						int count = 0;
+						int level = 0;
+						if (timedThreats[i].hasExternal()) {
+							count++;
+							level += timedThreats[i].getExternal().getThreatLevel();
+						}
+						if (timedThreats[i].hasInternal()) {
+							count++;
+							level += timedThreats[i].getInternal().getThreatLevel();
+						}
+						if (i < 4) {
+							threatCountPhase1 += count;
+							threatLevelPhase1 += level;
+						} else {
+							threatCountPhase2 += count;
+							threatLevelPhase2 += level;
+						}
+					}
+				}
+				// check sanity of distributions of threats among phase 1 and 2
+				if (Math.abs(threatCountPhase1 - threatCountPhase2) > 1) {
+					logger.info("Threats are not evenly distributed across the two phases. Back up.");
+					return null;
+				} else if (Math.abs(threatLevelPhase1 - threatLevelPhase2) > 2) {
+					logger.info("Threat levels are not evenly distributed across the two phases. Back up.");
+					return null;
+				}
+			}
+
+			// We need to check that there are no two internal threats with no external threat
+			// in between them.
+			{
+				boolean lastSeenWasInternal = false;
+				for (ThreatGroup timedThreat : timedThreats) {
+					if (timedThreat != null) {
+						if (timedThreat.hasInternal()) {
+							if (lastSeenWasInternal) {
+								logger.info("Threat distribution failed - found two adjacent internal threats. Back up.");
+								return null;
+							} else lastSeenWasInternal = true;
+						} else if (timedThreat.hasExternal()) {
+							lastSeenWasInternal = false;
+						}
+					}
+				}
+			}
+			
+			// Success!
+			logger.info("Threat time assignment complete!");
+			return timedThreats;
+		}
+
+		// Recursive Case. Take one untimed threat and make it timed, then recursively call this function again
+		// to do the rest. Magic!
+		ArrayList<ThreatGroup> untimedThreatsToTry = new ArrayList(Arrays.asList(untimedThreats));
+		while (!untimedThreatsToTry.isEmpty()) {
+			int index = this.generator.nextInt(untimedThreatsToTry.size());
+			ThreatGroup threatGroup = untimedThreatsToTry.remove(index);
+
+			// Attempt to add it
+			// for each threat group, set min and max phases
+			int minTime = 1;
+			int maxTime = 8;
+
+			Threat externalThreat = threatGroup.getExternal();
+			if (externalThreat != null) {
+				if (externalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
+					if (minTime < minTSeriousExternalThreat) {
+						minTime = minTSeriousExternalThreat;
+					}
+					if (maxTime > maxTSeriousExternalThreat) {
+						maxTime = maxTSeriousExternalThreat;
+					}
+				} else {
+					if (minTime < minTNormalExternalThreat) {
+						minTime = minTNormalExternalThreat;
+					}
+					if (maxTime > maxTNormalExternalThreat) {
+						maxTime = maxTNormalExternalThreat;
+					}
+				}
+			}
+
+			Threat internalThreat = threatGroup.getInternal();
+			if (internalThreat != null) {
+				if (internalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
+					if (minTime < minTSeriousInternalThreat) {
+						minTime = minTSeriousInternalThreat;
+					}
+					if (maxTime > maxTSeriousInternalThreat) {
+						maxTime = maxTSeriousInternalThreat;
+					}
+				} else {
+					if (minTime < minTNormalInternalThreat) {
+						minTime = minTNormalInternalThreat;
+					}
+					if (maxTime > maxTNormalInternalThreat) {
+						maxTime = maxTNormalInternalThreat;
+					}
+				}
+			}
+
+			// create list of possible times - find remaining possible times and pick one
+			LinkedList<Integer> possibleTimedThreatsIndices = new LinkedList<>();
+			for (int t = minTime; t <= maxTime; t++) {
+				// t is the time slot (1-indexes) and i is the index index (0-based)
+				int i = t - 1;
+				// If this timeslot is alread taken, skip it.
+				if (timedThreats[i] != null) continue;
+
+				// If this threat group contains an internal threat, skip this index
+				// if the previous or next index also has an internal threat
+				// as we do not allow consecutive internal threats.
+				if (internalThreat != null) {
+					if (t > 1 && timedThreats[i - 1] != null && timedThreats[i - 1].hasInternal()) {
+						continue;
+					}
+					if (t < 8 && timedThreats[i + 1] != null && timedThreats[i + 1].hasInternal()) {
+						continue;
+					}
+				}
+
+				// This is a possible index to put this threat into
+				possibleTimedThreatsIndices.add(i);
+			}
+
+			// no possible time slots left - giving up
+			if (possibleTimedThreatsIndices.isEmpty()) {
+				continue;
+			}
+
+			// We have one or more valid timeslots. Pick one at random,
+			// create the two new arguments for the recursive call and call it.
+			int possibleTimedThreatsIndex = possibleTimedThreatsIndices.get(generator.nextInt(possibleTimedThreatsIndices.size()));
+			ThreatGroup[] newTimedThreats = timedThreats.clone();
+			newTimedThreats[possibleTimedThreatsIndex] = threatGroup;
+			ArrayList<ThreatGroup> newUntimedThreats = new ArrayList(Arrays.asList(untimedThreats));
+			newUntimedThreats.remove(threatGroup);
+			ThreatGroup[] result = assignTimeslotsToThreats(newUntimedThreats.toArray(new ThreatGroup[0]), newTimedThreats);
+			if (result != null) return result;
+
+			// If the result of the recursive call is null, it means that the picked candidate index didn't work.
+			// Loop back and try another.
+		}
+
+		// We have run out of untimed threats to try. This is a dead end. Return null
+		logger.info("Cannot find a time slot for an untimed threat. Back up.");
+		return null;
 	}
 	
 	/**
