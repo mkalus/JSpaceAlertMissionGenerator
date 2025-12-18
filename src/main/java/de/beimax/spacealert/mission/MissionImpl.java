@@ -633,26 +633,24 @@ public class MissionImpl implements Mission {
 		// generate attack sectors
 		int lastSector = -1; // to not generate same sectors twice
 		boolean lastThreatWasInternal = false; // sanity check if there are two internal threats in a row - if there are, retry mission
+		int redThreats = 0;
+		int blueThreats = 0;
+		int whiteThreats = 0;
 		for (int i = 0; i < 8; i++) {
 			if (threats[i] != null) {
 				Threat t = threats[i].getExternal();
 				if (t != null) {
-					switch (generator.nextInt(3)) {
-						case 0:
-							if (lastSector != Threat.THREAT_SECTOR_BLUE) t.setSector(Threat.THREAT_SECTOR_BLUE);
-							else t.setSector(Threat.THREAT_SECTOR_WHITE);
-							break;
-						case 1:
-							if (lastSector != Threat.THREAT_SECTOR_WHITE) t.setSector(Threat.THREAT_SECTOR_WHITE);
-							else t.setSector(Threat.THREAT_SECTOR_RED);
-							break;
-						case 2:
-							if (lastSector != Threat.THREAT_SECTOR_RED) t.setSector(Threat.THREAT_SECTOR_RED);
-							else t.setSector(Threat.THREAT_SECTOR_BLUE);
-							break;
-						// default: System.out.println("No Way!");
-					}
-					lastSector = t.getSector();
+					Set<Integer> possibleSectors = new HashSet<>();
+					if (redThreats < 3) possibleSectors.add(Threat.THREAT_SECTOR_RED);
+					if (blueThreats < 3) possibleSectors.add(Threat.THREAT_SECTOR_BLUE);
+					if (whiteThreats < 3) possibleSectors.add(Threat.THREAT_SECTOR_WHITE);
+					possibleSectors.remove(lastSector);
+					int index = generator.nextInt(possibleSectors.size());
+					lastSector = (int) possibleSectors.toArray()[index];
+					t.setSector(lastSector);
+					if (lastSector == Threat.THREAT_SECTOR_RED) redThreats++;
+					if (lastSector == Threat.THREAT_SECTOR_BLUE) blueThreats++;
+					if (lastSector == Threat.THREAT_SECTOR_WHITE) whiteThreats++;
 				}
 				t = threats[i].getInternal();
 				if (t != null) {
