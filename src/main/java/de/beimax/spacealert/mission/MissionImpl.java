@@ -706,38 +706,22 @@ public class MissionImpl implements Mission {
 			Threat externalThreat = threatGroup.getExternal();
 			if (externalThreat != null) {
 				if (externalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-					if (minTime < minTSeriousExternalThreat) {
-						minTime = minTSeriousExternalThreat;
-					}
-					if (maxTime > maxTSeriousExternalThreat) {
-						maxTime = maxTSeriousExternalThreat;
-					}
+					minTime = Math.max(minTime, minTSeriousExternalThreat);
+					maxTime = Math.min(maxTime, maxTSeriousExternalThreat);
 				} else {
-					if (minTime < minTNormalExternalThreat) {
-						minTime = minTNormalExternalThreat;
-					}
-					if (maxTime > maxTNormalExternalThreat) {
-						maxTime = maxTNormalExternalThreat;
-					}
+					minTime = Math.max(minTime, minTNormalExternalThreat);
+					maxTime = Math.min(maxTime, maxTNormalExternalThreat);
 				}
 			}
 
 			Threat internalThreat = threatGroup.getInternal();
 			if (internalThreat != null) {
 				if (internalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
-					if (minTime < minTSeriousInternalThreat) {
-						minTime = minTSeriousInternalThreat;
-					}
-					if (maxTime > maxTSeriousInternalThreat) {
-						maxTime = maxTSeriousInternalThreat;
-					}
+					minTime = Math.max(minTime, minTSeriousInternalThreat);
+					maxTime = Math.min(maxTime, maxTSeriousInternalThreat);
 				} else {
-					if (minTime < minTNormalInternalThreat) {
-						minTime = minTNormalInternalThreat;
-					}
-					if (maxTime > maxTNormalInternalThreat) {
-						maxTime = maxTNormalInternalThreat;
-					}
+					minTime = Math.max(minTime, minTNormalInternalThreat);
+					maxTime = Math.min(maxTime, maxTNormalInternalThreat);
 				}
 			}
 
@@ -753,11 +737,15 @@ public class MissionImpl implements Mission {
 				// if the previous or next index also has an internal threat
 				// as we do not allow consecutive internal threats.
 				if (internalThreat != null) {
-					if (t > 1 && timedThreats[i - 1] != null && timedThreats[i - 1].hasInternal()) {
-						continue;
-					}
-					if (t < 8 && timedThreats[i + 1] != null && timedThreats[i + 1].hasInternal()) {
-						continue;
+					if (t > 1 && timedThreats[i - 1] != null && timedThreats[i - 1].hasInternal()) continue;
+					if (t < 8 && timedThreats[i + 1] != null && timedThreats[i + 1].hasInternal()) continue;
+					// If this is a serious internal threat, also skip this index if either timeslots
+					// two slots over contains a serious internal threat.
+					if (internalThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) {
+						Threat prevThreat = t > 2 && timedThreats[i - 2] != null ? timedThreats[i - 2].getInternal() : null;
+						if (prevThreat != null && prevThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) continue;
+						Threat futuThreat = t < 7 && timedThreats[i + 2] != null ? timedThreats[i + 2].getInternal() : null;
+						if (futuThreat != null && futuThreat.getThreatLevel() == Threat.THREAT_LEVEL_SERIOUS) continue;
 					}
 				}
 
