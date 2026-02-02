@@ -74,6 +74,12 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
     --max-internal-threats
       Maximum number of internal threats
       Default: 2
+    --max-normal-threats
+      Maximum number of normal threats.
+      Default: threat level minus 1 (not only normal threats)
+    --max-serious-threats
+      Maximum number of serious threats
+      Default: threat level minus 1, divided by 2, rounded down. (not only serious threats)
     --max-phase-time-1
       Maximum phase time for phase 1
       Default: 240
@@ -188,6 +194,12 @@ Start with: java -jar JSpaceAlertMissionGenerator.jar
       Default: []
     --seed, -S
       Set a random number generator seed
+    --random-distribution-weight-percent
+      Set probability distribution of random values. 0 = uniform, 100 = normal distribution around mid-point of the min and max values, value between makes a blend of the two.
+      Default: 0 (uniform distribution of values)
+    --random-standard-deviation-percent
+      The standard deviation, in percent, around the midpoint (0.5) between min (0) and max (1) values. Lower values, more chance of mid-way values.
+      Default: 20
     --silent, -s
       Silent mode
       Default: false
